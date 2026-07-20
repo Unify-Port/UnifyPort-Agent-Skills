@@ -1,6 +1,6 @@
 # UnifyPort Agent Skills
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [简体中文](README.zh-CN.md) | [Official website](https://www.unifyport.ai/) | [API reference](https://www.unifyport.ai/docs/)
 
 UnifyPort Agent Skills is the public, safety-oriented integration layer for using the UnifyPort Device API from AI agents. The repository combines public SDK operation metadata, a shared safety policy, task-level Skills, a controlled CLI, MCP transports, and host/platform adapters.
 

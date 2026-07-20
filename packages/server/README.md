@@ -1,6 +1,6 @@
 # UnifyPort Agent Skills runtime
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [简体中文](README.zh-CN.md) | [Official website](https://www.unifyport.ai/) | [API reference](https://www.unifyport.ai/docs/)
 
 `@unifyport/agent-skills` provides the secure CLI, stdio MCP server, authenticated Streamable HTTP gateway, and policy-gated OpenAPI facade for this repository. It delegates all Device API behavior to `@unifyport/agent-core`.
 

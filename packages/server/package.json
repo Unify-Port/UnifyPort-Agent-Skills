@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Unify-Port/UnifyPort-Agent-Skills.git",
     "directory": "packages/server"
   },
-  "homepage": "https://github.com/Unify-Port/UnifyPort-Agent-Skills",
+  "homepage": "https://www.unifyport.ai/",
   "bugs": {
     "url": "https://github.com/Unify-Port/UnifyPort-Agent-Skills/issues"
   },

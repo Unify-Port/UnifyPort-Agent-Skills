@@ -9,6 +9,7 @@
     "url": "git+https://github.com/Unify-Port/UnifyPort-Agent-Skills.git",
     "directory": "packages/core"
   },
+  "homepage": "https://www.unifyport.ai/",
   "engines": {
     "node": ">=22.12.0"
   },
