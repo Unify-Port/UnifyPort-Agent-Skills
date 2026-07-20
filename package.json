@@ -25,6 +25,7 @@
     "generate:check": "node --import tsx scripts/check-generated.ts",
     "history:check": "node --import tsx scripts/check-git-history.ts",
     "lint": "eslint .",
+    "prelint": "pnpm --filter @unifyport/agent-core build",
     "package:check": "pnpm build && node --import tsx scripts/check-packages.ts",
     "public:check": "node --import tsx scripts/check-public.ts",
     "test": "pnpm --filter @unifyport/agent-core build && vitest run --coverage",
