@@ -1,0 +1,60 @@
+schema_version: 1
+
+# canonical_source 始终指向 skills/；只有已验证目录型 host 才允许本地写入。
+hosts:
+  codex:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .agents/skills
+    user_directory: .codex/skills
+  claude-code:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .claude/skills
+    user_directory: .claude/skills
+  cursor:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .cursor/skills
+    user_directory: .cursor/skills
+  gemini-cli:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .gemini/skills
+    user_directory: .gemini/skills
+  github-copilot:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .github/skills
+    user_directory: .copilot/skills
+  kimi-code:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .kimi-code/skills
+    user_directory: .kimi-code/skills
+  qwen-code:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .qwen/skills
+    user_directory: .qwen/skills
+  qoder:
+    kind: agent_skills
+    install_mode: directory
+    project_directory: .qoder/skills
+    user_directory: .qoder/skills
+  trae:
+    kind: manual_import
+    install_mode: manual_import
+    note: Import the canonical Skill directories through the TRAE user interface.
+  openclaw:
+    kind: agent_skills
+    install_mode: cli
+    command: openclaw skills install <skill-directory>
+  dify:
+    kind: platform_adapter
+    install_mode: remote_integration
+    integration: dify_mcp_provider
+  coze:
+    kind: platform_adapter
+    install_mode: remote_integration
+    integration: coze_openapi

@@ -1,0 +1,111 @@
+schema_version: 1
+
+# 未命中的字段按 internal_only 处理，确保公开契约扩展不会自动进入模型或日志。
+default_classification: internal_only
+classes:
+  public:
+    model_input: allow
+    model_output: allow
+    logs: metadata_only
+  customer_confidential:
+    model_input: allow
+    model_output: allow
+    logs: deny
+  pii:
+    model_input: allow
+    model_output: allow
+    logs: deny
+  secret:
+    model_input: secret_ref_only
+    model_output: deny
+    logs: deny
+  one_time_secret:
+    model_input: deny
+    model_output: secure_sink_only
+    logs: deny
+  opaque_provider_data:
+    model_input: secret_ref_only
+    model_output: deny
+    logs: deny
+  internal_only:
+    model_input: deny
+    model_output: deny
+    logs: deny
+
+# 字段名规则只作为纵深防护；operation override 才是 secret 注入和 secure sink 的真源。
+field_rules:
+  - pattern: "(?i)^(api[_-]?key|authorization|cookie|password|secret|token)$"
+    classification: secret
+  - pattern: "(?i)(session|reply_token|auth_payload|provider_data|provider_profile|proxy)"
+    classification: opaque_provider_data
+  - pattern: "(?i)^(phone|number|email|contact_id|sender_id|member_id)$"
+    classification: pii
+
+operation_overrides:
+  createApiKey:
+    outputs:
+      - pointer: /data/data/api_key
+        classification: one_time_secret
+  rotateApiKey:
+    outputs:
+      - pointer: /data/data/api_key
+        classification: one_time_secret
+  createAccount:
+    inputs:
+      - pointer: /body/provider_data
+        classification: opaque_provider_data
+      - pointer: /body/proxy
+        classification: opaque_provider_data
+  updateAccount:
+    inputs:
+      - pointer: /body/provider_data
+        classification: opaque_provider_data
+      - pointer: /body/proxy
+        classification: opaque_provider_data
+  startAccountAuth:
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  getAccountAuthState:
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  startAccountQrAuth:
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  checkAccountQrAuth:
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  submitAccountAuthCode:
+    inputs:
+      - pointer: /body/code
+        classification: secret
+        required: true
+  submitAccountAuthPassword:
+    inputs:
+      - pointer: /body/password
+        classification: secret
+        required: true
+  importAccountAuthSession:
+    inputs:
+      - pointer: /body/session_url
+        classification: secret
+        required: true
+  getGroupInviteCode:
+    outputs:
+      - pointer: /data/data/invite_code
+        classification: one_time_secret
+  sendMessage:
+    inputs:
+      - pointer: /body/reply_to/reply_token
+        classification: secret
+  createWebhookEndpoint:
+    inputs:
+      - pointer: /body/signing_secret
+        classification: secret
+  updateWebhookEndpoint:
+    inputs:
+      - pointer: /body/signing_secret
+        classification: secret

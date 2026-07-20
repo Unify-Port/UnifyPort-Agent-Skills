@@ -1,0 +1,48 @@
+{
+  "name": "@unifyport/agent-skills",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "MCP server and secure CLI for the UnifyPort Device API Agent Skills.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Unify-Port/UnifyPort-Agent-Skills.git",
+    "directory": "packages/server"
+  },
+  "homepage": "https://github.com/Unify-Port/UnifyPort-Agent-Skills",
+  "bugs": {
+    "url": "https://github.com/Unify-Port/UnifyPort-Agent-Skills/issues"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "unifyport-agent": "./dist/cli.js",
+    "unifyport-mcp": "./dist/mcp-cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.zh-CN.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "pnpm clean && tsc -p tsconfig.build.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@unifyport/agent-core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

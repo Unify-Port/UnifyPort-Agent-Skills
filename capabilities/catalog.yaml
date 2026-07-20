@@ -1,0 +1,373 @@
+schema_version: 1
+expected_operation_count: 64
+expected_workflow_count: 16
+
+# 每个公开 operation 必须且只能归属一个任务型 Skill；新增 operation 默认无法通过校验。
+workflows:
+  - id: workspace-overview
+    title: Workspace overview
+    title_zh: 工作空间概览
+    description: Validate access and inspect workspace identity and account quota.
+    description_zh: 验证访问权限，并查看工作空间身份与账号配额。
+    operations:
+      - id: getWorkspace
+        access: read
+        confirmation: none
+        channel: model_safe
+
+  - id: workspace-settings
+    title: Workspace settings
+    title_zh: 工作空间设置
+    description: Update workspace properties through an explicit administrative action.
+    description_zh: 通过明确的管理操作更新工作空间属性。
+    operations:
+      - id: updateWorkspace
+        access: write
+        confirmation: confirm
+        channel: model_safe
+
+  - id: api-key-lifecycle
+    title: API key lifecycle
+    title_zh: API Key 生命周期
+    description: List, create, disable, enable, and rotate workspace API keys.
+    description_zh: 查询、创建、停用、启用和轮换工作空间 API Key。
+    operations:
+      - id: listApiKeys
+        access: read
+        confirmation: none
+        channel: model_safe
+      - id: createApiKey
+        access: write
+        confirmation: confirm
+        channel: secure_output
+      - id: updateApiKeyStatus
+        access: write
+        confirmation: confirm
+        channel: model_safe
+      - id: rotateApiKey
+        access: destructive
+        confirmation: double_confirm
+        channel: secure_output
+
+  - id: account-lifecycle
+    title: Account lifecycle
+    title_zh: 账号生命周期
+    description: Discover regions and create, inspect, update, or remove provider accounts.
+    description_zh: 查询区域，并创建、查看、更新或删除 provider 账号。
+    operations:
+      - id: listProviderRegions
+        access: read
+        confirmation: none
+        channel: model_safe
+      - id: listAccounts
+        access: read
+        confirmation: none
+        channel: projected
+      - id: createAccount
+        access: write
+        confirmation: confirm
+        channel: secure_input
+      - id: getAccount
+        access: read
+        confirmation: none
+        channel: projected
+      - id: updateAccount
+        access: write
+        confirmation: confirm
+        channel: secure_input
+      - id: deleteAccount
+        access: destructive
+        confirmation: double_confirm
+        channel: model_safe
+
+  - id: account-authentication
+    title: Account authentication
+    title_zh: 账号授权
+    description: Run interactive QR, code, password, or session authentication workflows.
+    description_zh: 执行二维码、验证码、密码或 session 的交互式授权工作流。
+    operations:
+      - id: getAccountAuthState
+        access: read
+        confirmation: none
+        channel: secure_output
+      - id: startAccountAuth
+        access: write
+        confirmation: interactive
+        channel: secure_output
+      - id: startAccountQrAuth
+        access: write
+        confirmation: interactive
+        channel: secure_output
+      - id: checkAccountQrAuth
+        access: write
+        confirmation: interactive
+        channel: secure_output
+      - id: submitAccountAuthCode
+        access: write
+        confirmation: interactive
+        channel: secure_input
+      - id: submitAccountAuthPassword
+        access: write
+        confirmation: interactive
+        channel: secure_input
+      - id: importAccountAuthSession
+        access: write
+        confirmation: confirm
+        channel: secure_input
+      - id: cancelAccountAuth
+        access: write
+        confirmation: confirm
+        channel: model_safe
+
+  - id: account-runtime
+    title: Account runtime
+    title_zh: 账号运行状态
+    description: Start, stop, refresh, and reconnect an authorized account runtime.
+    description_zh: 启动、停止、刷新和重连已授权账号的 runtime。
+    operations:
+      - id: refreshAccountRuntime
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: startAccountRuntime
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: stopAccountRuntime
+        access: write
+        confirmation: confirm
+        channel: model_safe
+      - id: reconnectAccountRuntime
+        access: write
+        confirmation: confirm
+        channel: model_safe
+
+  - id: conversation-explorer
+    title: Conversation explorer
+    title_zh: 会话查询
+    description: Find conversations, details, and members while preserving provider identifiers.
+    description_zh: 查询会话、详情和成员，并保留 provider 原始标识符。
+    operations:
+      - id: listConversations
+        access: read
+        confirmation: none
+        channel: projected
+      - id: getConversation
+        access: read
+        confirmation: none
+        channel: projected
+      - id: listConversationMembers
+        access: read
+        confirmation: none
+        channel: projected
+
+  - id: conversation-state
+    title: Conversation state
+    title_zh: 会话状态
+    description: Manage read, mute, and pin state for supported conversations.
+    description_zh: 管理受支持会话的已读、静音和置顶状态。
+    operations:
+      - id: markConversationRead
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: markConversationUnread
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: muteConversation
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: unmuteConversation
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: pinConversation
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: unpinConversation
+        access: write
+        confirmation: intent
+        channel: model_safe
+
+  - id: conversation-labels
+    title: Conversation labels
+    title_zh: 会话标签
+    description: List and administer conversation labels and label membership.
+    description_zh: 查询和管理会话标签及其成员关系。
+    operations:
+      - id: listConversationLabels
+        access: read
+        confirmation: none
+        channel: model_safe
+      - id: setConversationLabelMembers
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: upsertConversationLabel
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: deleteConversationLabel
+        access: destructive
+        confirmation: confirm
+        channel: model_safe
+
+  - id: contact-directory
+    title: Contact directory
+    title_zh: 联系人目录
+    description: Search contact records, details, and the account blocklist.
+    description_zh: 查询联系人记录、详情和账号黑名单。
+    operations:
+      - id: listContacts
+        access: read
+        confirmation: none
+        channel: projected
+      - id: getContact
+        access: read
+        confirmation: none
+        channel: projected
+      - id: listContactBlocklist
+        access: read
+        confirmation: none
+        channel: projected
+
+  - id: contact-controls
+    title: Contact controls
+    title_zh: 联系人控制
+    description: Block, unblock, and annotate supported contacts.
+    description_zh: 封锁、解封和备注受支持的联系人。
+    operations:
+      - id: blockContact
+        access: write
+        confirmation: confirm
+        channel: projected
+      - id: unblockContact
+        access: write
+        confirmation: intent
+        channel: projected
+      - id: setContactNote
+        access: write
+        confirmation: intent
+        channel: projected
+
+  - id: group-explorer
+    title: Group explorer
+    title_zh: 群组查询
+    description: Inspect groups, join requests, and protected invite information.
+    description_zh: 查看群组、入群申请和受保护的邀请码信息。
+    operations:
+      - id: listGroups
+        access: read
+        confirmation: none
+        channel: projected
+      - id: getGroup
+        access: read
+        confirmation: none
+        channel: projected
+      - id: listGroupJoinRequests
+        access: read
+        confirmation: none
+        channel: projected
+      - id: getGroupInviteCode
+        access: read
+        confirmation: intent
+        channel: secure_output
+
+  - id: group-administration
+    title: Group administration
+    title_zh: 群组管理
+    description: Create and administer groups, members, details, and join decisions.
+    description_zh: 创建和管理群组、成员、群信息与入群决策。
+    operations:
+      - id: createGroup
+        access: write
+        confirmation: confirm
+        channel: projected
+      - id: leaveGroup
+        access: destructive
+        confirmation: double_confirm
+        channel: model_safe
+      - id: updateGroupMembers
+        access: destructive
+        confirmation: confirm
+        channel: projected
+      - id: updateGroupInfo
+        access: write
+        confirmation: confirm
+        channel: model_safe
+      - id: updateGroupJoinRequests
+        access: destructive
+        confirmation: double_confirm
+        channel: projected
+      - id: setGroupJoinApprovalMode
+        access: write
+        confirmation: confirm
+        channel: model_safe
+
+  - id: message-sender
+    title: Message sender
+    title_zh: 消息发送
+    description: Send a reviewed message to one explicit destination.
+    description_zh: 向一个明确目标发送经过确认的消息。
+    operations:
+      - id: sendMessage
+        access: write
+        confirmation: confirm
+        channel: secure_input
+
+  - id: message-actions
+    title: Message actions
+    title_zh: 消息操作
+    description: Pin, revoke, react to, or edit an existing message.
+    description_zh: 置顶、撤回、回应或编辑已有消息。
+    operations:
+      - id: pinMessage
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: revokeMessage
+        access: destructive
+        confirmation: double_confirm
+        channel: model_safe
+      - id: reactMessage
+        access: write
+        confirmation: intent
+        channel: model_safe
+      - id: editMessage
+        access: destructive
+        confirmation: confirm
+        channel: projected
+
+  - id: webhook-endpoints
+    title: Webhook endpoints
+    title_zh: Webhook 端点
+    description: List and administer endpoints that receive Device API events.
+    description_zh: 查询和管理接收 Device API 事件的端点。
+    operations:
+      - id: listWebhookEndpoints
+        access: read
+        confirmation: none
+        channel: model_safe
+      - id: createWebhookEndpoint
+        access: write
+        confirmation: confirm
+        channel: secure_input
+      - id: getWebhookEndpoint
+        access: read
+        confirmation: none
+        channel: model_safe
+      - id: updateWebhookEndpoint
+        access: write
+        confirmation: confirm
+        channel: secure_input
+      - id: deleteWebhookEndpoint
+        access: destructive
+        confirmation: double_confirm
+        channel: model_safe
+      - id: deactivateWebhookEndpoint
+        access: write
+        confirmation: confirm
+        channel: model_safe

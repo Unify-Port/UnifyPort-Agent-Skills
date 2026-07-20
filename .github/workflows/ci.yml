@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# CI 只读取公开仓源码，避免默认令牌获得无关写权限。
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        # 固定完整 commit，避免可移动 tag 改变受信任的 CI 执行代码。
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.34.5
+          run_install: false
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        # lockfile 是公开构建边界，CI 不允许安装过程静默改写解析结果。
+        run: pnpm install --frozen-lockfile
+      - name: Run repository checks
+        # 单一入口同时覆盖源码检查、测试、构建和实际 tarball 发布闸门。
+        run: pnpm check

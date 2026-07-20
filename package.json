@@ -1,0 +1,48 @@
+{
+  "name": "unifyport-agent-skills-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Public, policy-gated Agent Skills and MCP runtime for the UnifyPort Device API.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Unify-Port/UnifyPort-Agent-Skills.git"
+  },
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "build": "pnpm -r --workspace-concurrency=1 build",
+    "capabilities:check": "node --import tsx scripts/check-capabilities.ts",
+    "check": "pnpm public:check && pnpm history:check && pnpm capabilities:check && pnpm generate:check && pnpm docs:check && pnpm lint && pnpm format:check && pnpm test && pnpm typecheck && pnpm package:check",
+    "clean": "node --import tsx scripts/clean.ts",
+    "docs:check": "node --import tsx scripts/check-docs.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "generate": "node --import tsx scripts/generate.ts",
+    "generate:check": "node --import tsx scripts/check-generated.ts",
+    "history:check": "node --import tsx scripts/check-git-history.ts",
+    "lint": "eslint .",
+    "package:check": "pnpm build && node --import tsx scripts/check-packages.ts",
+    "public:check": "node --import tsx scripts/check-public.ts",
+    "test": "pnpm --filter @unifyport/agent-core build && vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.tooling.json --noEmit && pnpm --filter @unifyport/agent-core build && pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.2",
+    "@types/node": "24.13.3",
+    "@vitest/coverage-v8": "4.1.10",
+    "@unifyport/sdk-node": "0.1.3",
+    "eslint": "9.39.2",
+    "jiti": "2.7.0",
+    "prettier": "3.9.5",
+    "tsx": "4.23.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.55.0",
+    "vitest": "4.1.10",
+    "yaml": "2.9.0"
+  }
+}

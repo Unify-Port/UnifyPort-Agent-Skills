@@ -1,0 +1,25 @@
+version: 2
+
+updates:
+  # pnpm workspace 由根 lockfile 统一管理，避免各 package 产生重复更新。
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 5
+    groups:
+      production-dependencies:
+        dependency-type: production
+      development-dependencies:
+        dependency-type: development
+
+  # Actions 独立更新，避免工具链补丁被 npm 依赖批次阻塞。
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 3
