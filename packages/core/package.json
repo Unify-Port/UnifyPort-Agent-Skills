@@ -31,7 +31,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@unifyport/sdk-node": "0.1.3",
+    "@unifyport/sdk-node": "0.3.0",
     "ajv": "8.20.0"
   },
   "publishConfig": {
