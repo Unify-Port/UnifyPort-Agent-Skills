@@ -232,3 +232,37 @@ describe("AgentRuntime", () => {
     expect(createWebhookEndpoint).not.toHaveBeenCalled();
   });
 });
+
+describe("pending contract operations", () => {
+  it.each([
+    "createCall",
+    "getActiveCall",
+    "hangupCall",
+    "getAccountOperation",
+    "createAccountAuthSession",
+    "submitAccountPasskeyResponse",
+    "confirmAccountPasskey",
+    "listPosts",
+    "getPost",
+    "listPostComments",
+    "replyPostComment",
+    "requestConversationHistory",
+    "createContact",
+    "getContactMembership"
+  ])(
+    "keeps %s unavailable until its workflow and field policy are reviewed",
+    async (operationId) => {
+      // 依赖升级前只锁定拒绝边界，不把未审查的新接口暴露为模型工具。
+      const invoked = vi.fn(async () => ({ data: {}, status: 200 }));
+      const runtime = new AgentRuntime({
+        config: config({ enableWrites: true, enableDestructive: true }),
+        client: Object.fromEntries([[operationId, invoked]])
+      });
+      expect(runtime.isEnabled(operationId)).toBe(false);
+      await expect(runtime.invoke(operationId, { request: {} })).rejects.toMatchObject({
+        code: "UNKNOWN_OPERATION"
+      });
+      expect(invoked).not.toHaveBeenCalled();
+    }
+  );
+});
