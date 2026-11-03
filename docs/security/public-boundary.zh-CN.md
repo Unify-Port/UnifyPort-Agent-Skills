@@ -10,7 +10,7 @@
 
 ## 当前状态
 
-Capability catalog 通过 16 个任务型 Skills 覆盖 64 个公开 SDK operations。Operation coverage 与 channel exposure 是两个不同概念：当某个 operation 的策略要求 secure input 或 output、不能作为原始模型可见 tool 暴露时，它仍必须保留在覆盖范围内。
+Capability catalog 通过 18 个任务型 Skills 覆盖 78 个公开 SDK operations。Operation coverage 与 channel exposure 是两个不同概念：当某个 operation 的策略要求 secure input 或 output、不能作为原始模型可见 tool 暴露时，它仍必须保留在覆盖范围内。
 
 当前仓库已实现 catalog、生成文件、双语文档和公开 pattern 检查，以及共享 runtime、受控 CLI、stdio MCP、Streamable HTTP/OpenAPI gateway、adapter source、自动 npm-tarball expansion/scanning 和完整 Git patch-history scanning。这些 packages 已在源码中实现并测试，但尚未发布到 npm。完整 standalone-contract sanitization/parity 和厂商托管环境 adapter validation 不属于当前能力声明。自动检查只能补充人工评审；scanner 通过不代表违反本策略的内容获得公开授权。
 
@@ -96,7 +96,7 @@ MCP 是模型可见边界。Tool schemas、calls、results、traces 和 errors �
 - 通过 `GET /openapi.json` 和 `POST /tools/<tool-name>` 向 OpenAPI consumers 投影完全相同的 registry。
 - 在 stdio、Streamable HTTP 和 OpenAPI tool calls 上都要求脱敏 output 和稳定公开错误。
 
-MCP/OpenAPI adapters 不能为了增加 tool 数量而降低 operation 分类。完整 64-operation coverage 不代表必须提供 64 个 MCP tools 或 64 个原始 OpenAPI routes。MCP 与 tool-execution requests 必须使用 Bearer 鉴权；获取 schema 不执行 Device API operation。
+MCP/OpenAPI adapters 不能为了增加 tool 数量而降低 operation 分类。完整 78-operation coverage 不代表必须提供 78 个 MCP tools 或 78 个原始 OpenAPI routes。MCP 与 tool-execution requests 必须使用 Bearer 鉴权；获取 schema 不执行 Device API operation。
 
 ### CLI
 
@@ -149,7 +149,7 @@ Sanitization 不能因为某个公开 field 或 operation 对 MCP 不安全就�
 
 当前自动检查覆盖：
 
-- Catalog schema、16 个 Skills 的 `64/64` 唯一 ownership、mutability、confirmation、secure-channel 和 classified-pointer 关系。
+- Catalog schema、18 个 Skills 的 `78/78` 唯一 ownership、mutability、confirmation、secure-channel 和 classified-pointer 关系。
 - 确定性生成文件 freshness。
 - 双语 Markdown counterpart、语言导航、本地链接和 Skill frontmatter。
 - Source 和当前已有 generated/build text 中已知 filesystem path、private-network URL、provenance metadata、key material、access token、JSON Web Token 和 hard-coded secret assignment patterns。

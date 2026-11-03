@@ -51,17 +51,27 @@ operation_overrides:
       - pointer: /data/data/api_key
         classification: one_time_secret
   createAccount:
+    outputs:
+      - pointer: /data/data/provider_profile
+        classification: opaque_provider_data
     inputs:
       - pointer: /body/provider_data
         classification: opaque_provider_data
+        encoding: json
       - pointer: /body/proxy
         classification: opaque_provider_data
+        encoding: json
   updateAccount:
+    outputs:
+      - pointer: /data/data/provider_profile
+        classification: opaque_provider_data
     inputs:
       - pointer: /body/provider_data
         classification: opaque_provider_data
+        encoding: json
       - pointer: /body/proxy
         classification: opaque_provider_data
+        encoding: json
   startAccountAuth:
     outputs:
       - pointer: /data/data
@@ -90,14 +100,19 @@ operation_overrides:
         required: true
   importAccountAuthSession:
     inputs:
+      - pointer: /body/whatsapp-protocol
+        classification: opaque_provider_data
+        encoding: json
       - pointer: /body/session_url
         classification: secret
-        required: true
   getGroupInviteCode:
     outputs:
       - pointer: /data/data/invite_code
         classification: one_time_secret
   sendMessage:
+    outputs:
+      - pointer: /data/data/reply_token
+        classification: one_time_secret
     inputs:
       - pointer: /body/reply_to/reply_token
         classification: secret
@@ -109,3 +124,25 @@ operation_overrides:
     inputs:
       - pointer: /body/signing_secret
         classification: secret
+
+  # 浏览器授权与通话链接属于一次性凭证，先预留安全 sink 再执行写入。
+  createAccountAuthSession:
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  submitAccountPasskeyResponse:
+    inputs:
+      - pointer: /body/webauthn_response
+        classification: secret
+        required: true
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  confirmAccountPasskey:
+    outputs:
+      - pointer: /data/data
+        classification: one_time_secret
+  createCall:
+    outputs:
+      - pointer: /data/data/join_url
+        classification: one_time_secret

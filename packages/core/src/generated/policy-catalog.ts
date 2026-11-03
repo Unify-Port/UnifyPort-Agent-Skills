@@ -153,7 +153,7 @@ export const operationPolicies = {
     channel: "projected",
     retryable: true,
     secretInput: false,
-    secretOutput: false,
+    secretOutput: true,
     mcpExposure: "never",
     data: {
       inputs: [],
@@ -168,25 +168,33 @@ export const operationPolicies = {
     path: "/v1/accounts",
     access: "write",
     confirmation: "confirm",
-    channel: "secure_input",
+    channel: "secure_input_output",
     retryable: false,
     secretInput: true,
-    secretOutput: false,
+    secretOutput: true,
     mcpExposure: "never",
     data: {
       inputs: [
         {
+          encoding: "json",
           pointer: "/body/provider_data",
           classification: "opaque_provider_data",
           required: false
         },
         {
+          encoding: "json",
           pointer: "/body/proxy",
           classification: "opaque_provider_data",
           required: false
         }
       ],
-      outputs: []
+      outputs: [
+        {
+          pointer: "/data/data/provider_profile",
+          classification: "opaque_provider_data",
+          required: false
+        }
+      ]
     }
   },
   getAccount: {
@@ -215,25 +223,33 @@ export const operationPolicies = {
     path: "/v1/accounts/{account_id}",
     access: "write",
     confirmation: "confirm",
-    channel: "secure_input",
+    channel: "secure_input_output",
     retryable: false,
     secretInput: true,
-    secretOutput: false,
+    secretOutput: true,
     mcpExposure: "never",
     data: {
       inputs: [
         {
+          encoding: "json",
           pointer: "/body/provider_data",
           classification: "opaque_provider_data",
           required: false
         },
         {
+          encoding: "json",
           pointer: "/body/proxy",
           classification: "opaque_provider_data",
           required: false
         }
       ],
-      outputs: []
+      outputs: [
+        {
+          pointer: "/data/data/provider_profile",
+          classification: "opaque_provider_data",
+          required: false
+        }
+      ]
     }
   },
   deleteAccount: {
@@ -245,6 +261,24 @@ export const operationPolicies = {
     access: "destructive",
     confirmation: "double_confirm",
     channel: "model_safe",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  getAccountOperation: {
+    operationId: "getAccountOperation",
+    workflowId: "account-lifecycle",
+    toolName: "device_get_account_operation",
+    method: "GET",
+    path: "/v1/account-operations/{operation_id}",
+    access: "read",
+    confirmation: "none",
+    channel: "projected",
     retryable: false,
     secretInput: false,
     secretOutput: false,
@@ -414,9 +448,15 @@ export const operationPolicies = {
     data: {
       inputs: [
         {
+          encoding: "json",
+          pointer: "/body/whatsapp-protocol",
+          classification: "opaque_provider_data",
+          required: false
+        },
+        {
           pointer: "/body/session_url",
           classification: "secret",
-          required: true
+          required: false
         }
       ],
       outputs: []
@@ -438,6 +478,84 @@ export const operationPolicies = {
     data: {
       inputs: [],
       outputs: []
+    }
+  },
+  createAccountAuthSession: {
+    operationId: "createAccountAuthSession",
+    workflowId: "account-authentication",
+    toolName: "device_create_account_auth_session",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/auth-sessions",
+    access: "write",
+    confirmation: "confirm",
+    channel: "secure_output",
+    retryable: false,
+    secretInput: false,
+    secretOutput: true,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: [
+        {
+          pointer: "/data/data",
+          classification: "one_time_secret",
+          required: false
+        }
+      ]
+    }
+  },
+  submitAccountPasskeyResponse: {
+    operationId: "submitAccountPasskeyResponse",
+    workflowId: "account-authentication",
+    toolName: "device_submit_account_passkey_response",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/auth/passkey-response",
+    access: "write",
+    confirmation: "confirm",
+    channel: "secure_input_output",
+    retryable: false,
+    secretInput: true,
+    secretOutput: true,
+    mcpExposure: "never",
+    data: {
+      inputs: [
+        {
+          pointer: "/body/webauthn_response",
+          classification: "secret",
+          required: true
+        }
+      ],
+      outputs: [
+        {
+          pointer: "/data/data",
+          classification: "one_time_secret",
+          required: false
+        }
+      ]
+    }
+  },
+  confirmAccountPasskey: {
+    operationId: "confirmAccountPasskey",
+    workflowId: "account-authentication",
+    toolName: "device_confirm_account_passkey",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/auth/passkey-confirm",
+    access: "write",
+    confirmation: "confirm",
+    channel: "secure_output",
+    retryable: false,
+    secretInput: false,
+    secretOutput: true,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: [
+        {
+          pointer: "/data/data",
+          classification: "one_time_secret",
+          required: false
+        }
+      ]
     }
   },
   refreshAccountRuntime: {
@@ -558,6 +676,24 @@ export const operationPolicies = {
     confirmation: "none",
     channel: "projected",
     retryable: true,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  requestConversationHistory: {
+    operationId: "requestConversationHistory",
+    workflowId: "conversation-explorer",
+    toolName: "device_request_conversation_history",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/conversations/history/request",
+    access: "write",
+    confirmation: "confirm",
+    channel: "projected",
+    retryable: false,
     secretInput: false,
     secretOutput: false,
     mcpExposure: "never",
@@ -792,6 +928,42 @@ export const operationPolicies = {
     confirmation: "none",
     channel: "projected",
     retryable: true,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  createContact: {
+    operationId: "createContact",
+    workflowId: "contact-directory",
+    toolName: "device_create_contact",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/contacts/add",
+    access: "write",
+    confirmation: "confirm",
+    channel: "projected",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  getContactMembership: {
+    operationId: "getContactMembership",
+    workflowId: "contact-directory",
+    toolName: "device_get_contact_membership",
+    method: "GET",
+    path: "/v1/accounts/{account_id}/contacts/membership",
+    access: "read",
+    confirmation: "none",
+    channel: "projected",
+    retryable: false,
     secretInput: false,
     secretOutput: false,
     mcpExposure: "never",
@@ -1048,10 +1220,10 @@ export const operationPolicies = {
     path: "/v1/messages",
     access: "write",
     confirmation: "confirm",
-    channel: "secure_input",
+    channel: "secure_input_output",
     retryable: false,
     secretInput: true,
-    secretOutput: false,
+    secretOutput: true,
     mcpExposure: "never",
     data: {
       inputs: [
@@ -1061,7 +1233,13 @@ export const operationPolicies = {
           required: false
         }
       ],
-      outputs: []
+      outputs: [
+        {
+          pointer: "/data/data/reply_token",
+          classification: "one_time_secret",
+          required: false
+        }
+      ]
     }
   },
   pinMessage: {
@@ -1247,6 +1425,138 @@ export const operationPolicies = {
     access: "write",
     confirmation: "confirm",
     channel: "model_safe",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  listPosts: {
+    operationId: "listPosts",
+    workflowId: "posts-comments",
+    toolName: "device_list_posts",
+    method: "GET",
+    path: "/v1/accounts/{account_id}/posts",
+    access: "read",
+    confirmation: "none",
+    channel: "projected",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  getPost: {
+    operationId: "getPost",
+    workflowId: "posts-comments",
+    toolName: "device_get_post",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/posts/info",
+    access: "read",
+    confirmation: "none",
+    channel: "projected",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  listPostComments: {
+    operationId: "listPostComments",
+    workflowId: "posts-comments",
+    toolName: "device_list_post_comments",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/posts/comments/list",
+    access: "read",
+    confirmation: "none",
+    channel: "projected",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  replyPostComment: {
+    operationId: "replyPostComment",
+    workflowId: "posts-comments",
+    toolName: "device_reply_post_comment",
+    method: "POST",
+    path: "/v1/accounts/{account_id}/posts/comments/reply",
+    access: "write",
+    confirmation: "confirm",
+    channel: "projected",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  createCall: {
+    operationId: "createCall",
+    workflowId: "calls",
+    toolName: "device_create_call",
+    method: "POST",
+    path: "/v1/calls",
+    access: "write",
+    confirmation: "confirm",
+    channel: "secure_output",
+    retryable: false,
+    secretInput: false,
+    secretOutput: true,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: [
+        {
+          pointer: "/data/data/join_url",
+          classification: "one_time_secret",
+          required: false
+        }
+      ]
+    }
+  },
+  getActiveCall: {
+    operationId: "getActiveCall",
+    workflowId: "calls",
+    toolName: "device_get_active_call",
+    method: "GET",
+    path: "/v1/calls/active",
+    access: "read",
+    confirmation: "none",
+    channel: "projected",
+    retryable: false,
+    secretInput: false,
+    secretOutput: false,
+    mcpExposure: "never",
+    data: {
+      inputs: [],
+      outputs: []
+    }
+  },
+  hangupCall: {
+    operationId: "hangupCall",
+    workflowId: "calls",
+    toolName: "device_hangup_call",
+    method: "POST",
+    path: "/v1/calls/{call_id}/hangup",
+    access: "destructive",
+    confirmation: "double_confirm",
+    channel: "projected",
     retryable: false,
     secretInput: false,
     secretOutput: false,

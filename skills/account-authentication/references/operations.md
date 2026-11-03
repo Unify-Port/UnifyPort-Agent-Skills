@@ -57,3 +57,24 @@
 - CLI: `unifyport-agent call cancelAccountAuth --input-file <path>`
 - Policy: `write`, `confirm`, `model_safe`
 - Retry: never retry automatically
+
+## `createAccountAuthSession`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call createAccountAuthSession --input-file <path>`
+- Policy: `write`, `confirm`, `secure_output`
+- Retry: never retry automatically
+
+## `submitAccountPasskeyResponse`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call submitAccountPasskeyResponse --input-file <path>`
+- Policy: `write`, `confirm`, `secure_input_output`
+- Retry: never retry automatically
+
+## `confirmAccountPasskey`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call confirmAccountPasskey --input-file <path>`
+- Policy: `write`, `confirm`, `secure_output`
+- Retry: never retry automatically

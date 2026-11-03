@@ -6,5 +6,5 @@
 
 - MCP tool: not exposed by the released SDK policy
 - CLI: `unifyport-agent call sendMessage --input-file <path>`
-- Policy: `write`, `confirm`, `secure_input`
+- Policy: `write`, `confirm`, `secure_input_output`
 - Retry: never retry automatically

@@ -27,7 +27,7 @@ Dify and Coze are platform integrations, not native Agent Skills. TRAE is a manu
 
 ## Directory installers
 
-After building from source, install all 16 canonical Skills into a supported host directory:
+After building from source, install all 18 canonical Skills into a supported host directory:
 
 ```bash
 unifyport-agent install --host codex --scope project
@@ -60,7 +60,7 @@ Dify and Coze consume platform-specific integration recipes rather than Agent Sk
 - Dify connects directly to the authenticated Streamable HTTP MCP endpoint as an MCP provider.
 - Coze imports `GET /openapi.json` as a custom OpenAPI plugin and invokes the projected `POST /tools/<tool-name>` routes.
 
-Deploy the gateway only after applying the [remote gateway controls](../README.md#remote-gateway-boundary). Store the Bearer API key in the platform's protected credential facility and require it on every MCP or tool-execution request. Both integrations expose only the policy-gated registry: the default set is `getWorkspace`, `listApiKeys`, and `listProviderRegions`; `UNIFYPORT_ALLOW_WRITES=true` adds only `updateApiKeyStatus`. The OpenAPI facade is not a 64-operation raw API, and the remaining operations stay on the controlled CLI/Skills surface.
+Deploy the gateway only after applying the [remote gateway controls](../README.md#remote-gateway-boundary). Store the Bearer API key in the platform's protected credential facility and require it on every MCP or tool-execution request. Both integrations expose only the policy-gated registry: the default set is `getWorkspace`, `listApiKeys`, and `listProviderRegions`; `UNIFYPORT_ALLOW_WRITES=true` adds only `updateApiKeyStatus`. The OpenAPI facade is not a 78-operation raw API, and the remaining operations stay on the controlled CLI/Skills surface.
 
 Browser CORS is not enabled. `UNIFYPORT_GATEWAY_ALLOWED_ORIGINS` only rejects requests that include an unapproved `Origin` header; the gateway does not emit CORS response headers.
 

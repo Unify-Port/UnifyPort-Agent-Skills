@@ -6,7 +6,7 @@ UnifyPort Agent Skills is the public, safety-oriented integration layer for usin
 
 ## Current status
 
-The public SDK exports **64 operations**, and the capability catalog assigns every operation to exactly one of **16 task Skills**. The shared runtime, controlled CLI, stdio MCP server, authenticated Streamable HTTP gateway, and adapter source are implemented and tested in this repository. The npm packages have **not yet been published**; build and evaluate them from source until a verified registry release is announced.
+The public SDK exports **78 operations**, and the capability catalog assigns every operation to exactly one of **18 task Skills**. The shared runtime, controlled CLI, stdio MCP server, authenticated Streamable HTTP gateway, and adapter source are implemented and tested in this repository. The npm packages have **not yet been published**; build and evaluate them from source until a verified registry release is announced.
 
 Source implementation is not the same as vendor deployment. Directory installers and the OpenClaw staging metadata are tested locally; TRAE remains a manual import, and Dify/Coze use platform integration recipes. No adapter is claimed as end-to-end validated in a vendor-hosted environment.
 
@@ -18,34 +18,36 @@ Source implementation is not the same as vendor deployment. Directory installers
 - Default to least privilege, caller-bounded pagination, redacted logs, and explicit confirmation for consequential actions.
 - Keep secrets, private infrastructure details, and personal data outside public artifacts and model-visible channels.
 
-## The 16 task skills
+## The 18 task skills
 
-| Skill                    | Purpose                                                         | Default exposure              |
-| ------------------------ | --------------------------------------------------------------- | ----------------------------- |
-| `workspace-overview`     | Validate access and inspect the current workspace               | Read-only                     |
-| `workspace-settings`     | Change workspace settings                                       | Admin, confirmation required  |
-| `api-key-lifecycle`      | List, create, enable, disable, and rotate API keys              | Admin, secure output required |
-| `account-lifecycle`      | Discover regions and manage connected accounts                  | Guarded                       |
-| `account-authentication` | Complete QR, code, password, or session authorization workflows | Interactive secure channel    |
-| `account-runtime`        | Refresh, start, stop, or reconnect an account                   | Guarded                       |
-| `conversation-explorer`  | List conversations and inspect conversation details or members  | Read-only                     |
-| `conversation-state`     | Change read, mute, or pin state                                 | Explicit user intent          |
-| `conversation-labels`    | List and manage conversation labels                             | Guarded                       |
-| `contact-directory`      | Search contacts and inspect contact state                       | Read-only, sensitive data     |
-| `contact-controls`       | Block, unblock, or annotate contacts                            | Guarded                       |
-| `group-explorer`         | Inspect groups, join requests, and invite information           | Read-only, sensitive data     |
-| `group-administration`   | Create or modify groups and membership                          | High-impact confirmation      |
-| `message-sender`         | Send text, media, file, contact, reply, or mention messages     | External side effect          |
-| `message-actions`        | Pin, revoke, react to, or edit existing messages                | Guarded                       |
-| `webhook-endpoints`      | Manage event delivery endpoints                                 | Admin, secure input required  |
+| Skill                    | Purpose                                                         | Default exposure                        |
+| ------------------------ | --------------------------------------------------------------- | --------------------------------------- |
+| `workspace-overview`     | Validate access and inspect the current workspace               | Read-only                               |
+| `workspace-settings`     | Change workspace settings                                       | Admin, confirmation required            |
+| `api-key-lifecycle`      | List, create, enable, disable, and rotate API keys              | Admin, secure output required           |
+| `account-lifecycle`      | Discover regions and manage connected accounts                  | Guarded                                 |
+| `account-authentication` | Complete QR, code, password, or session authorization workflows | Interactive secure channel              |
+| `account-runtime`        | Refresh, start, stop, or reconnect an account                   | Guarded                                 |
+| `conversation-explorer`  | List conversations and inspect conversation details or members  | Guarded                                 |
+| `conversation-state`     | Change read, mute, or pin state                                 | Explicit user intent                    |
+| `conversation-labels`    | List and manage conversation labels                             | Guarded                                 |
+| `contact-directory`      | Search contacts and inspect contact state                       | Guarded, sensitive data                 |
+| `contact-controls`       | Block, unblock, or annotate contacts                            | Guarded                                 |
+| `group-explorer`         | Inspect groups, join requests, and invite information           | Guarded, sensitive data                 |
+| `group-administration`   | Create or modify groups and membership                          | High-impact confirmation                |
+| `message-sender`         | Send text, media, file, contact, reply, or mention messages     | External side effect                    |
+| `message-actions`        | Pin, revoke, react to, or edit existing messages                | Guarded                                 |
+| `webhook-endpoints`      | Manage event delivery endpoints                                 | Admin, secure input required            |
+| `posts-comments`         | Read posts/comments and confirm replies                         | Guarded                                 |
+| `calls`                  | Create, inspect and hang up beta calls                          | Secure output, destructive confirmation |
 
-The mapping is a coverage invariant: all 64 public `operationId` values must be present once, with no missing or duplicate ownership.
+The mapping is a coverage invariant: all 78 public `operationId` values must be present once, with no missing or duplicate ownership.
 
 ## Runtime, CLI, and MCP
 
 The implemented shared runtime owns authentication, request construction, response envelopes, stable error codes, request IDs, timeout enforcement, redaction, and safety metadata. It passes `retry: false` to the SDK and does not auto-paginate; retryability and pagination remain policy guidance that callers must apply explicitly and with bounds. Every adapter delegates API execution to that runtime rather than reimplementing it.
 
-- **Controlled CLI:** represents all 64 operations and is the required surface for workflows that need secure input, one-time secret output, or confirmation. Writes require `UNIFYPORT_ALLOW_WRITES=true`; destructive operations require the separate `UNIFYPORT_ALLOW_DESTRUCTIVE=true` switch.
+- **Controlled CLI:** represents all 78 operations and is the required surface for workflows that need secure input, one-time secret output, or confirmation. Writes require `UNIFYPORT_ALLOW_WRITES=true`; destructive operations require the separate `UNIFYPORT_ALLOW_DESTRUCTIVE=true` switch.
 - **stdio MCP:** exposes only `getWorkspace`, `listApiKeys`, and `listProviderRegions` by default. Setting `UNIFYPORT_ALLOW_WRITES=true` adds `updateApiKeyStatus`; the other 60 operations remain available through Skills and the controlled CLI, not as raw model tools.
 - **Streamable HTTP and OpenAPI facade:** `/mcp` exposes the MCP allowlist through a stateless gateway. `GET /openapi.json` projects the same registered tools, and `POST /tools/<tool-name>` invokes one projected tool for OpenAPI consumers. Tool execution requires the Device API key as a Bearer credential; the schema and health endpoints do not execute Device API operations.
 - **Host/platform adapters:** install canonical Skill assets or provide an explicit integration recipe without changing the runtime policy.
@@ -62,7 +64,7 @@ export UNIFYPORT_API_KEY='<your-api-key>'
 
 Do not place an API key in a prompt, command argument, configuration committed to Git, MCP tool payload, test fixture, or log. The runtime maps the value to the public API authentication header and must redact it from diagnostics.
 
-Some workflows need additional protected values, such as a one-time authorization code, password, imported session, webhook signing secret, or newly issued API key. These operations remain part of the 64-operation coverage, but they must use CLI secure input or a host-provided secure channel. They are not raw model-facing MCP tools.
+Some workflows need additional protected values, such as a one-time authorization code, password, imported session, webhook signing secret, or newly issued API key. These operations remain part of the 78-operation coverage, but they must use CLI secure input or a host-provided secure channel. They are not raw model-facing MCP tools.
 
 ## Build from source
 
@@ -85,7 +87,7 @@ The npm names and executable entry points in this source tree are pre-release in
 - Direct TLS certificate and key files.
 - An optional exact origin allowlist to reject requests carrying an unapproved `Origin` header.
 
-The gateway does not emit CORS response headers, so the origin allowlist does not enable browser CORS. It applies body-size, header, request-timeout, keep-alive, and concurrency limits, does not treat an MCP session as authentication, and does not log request headers or bodies. The OpenAPI facade contains only the same three default tools, or four when writes are explicitly enabled; it is not a 64-operation raw API. See [.env.example](.env.example) and the [Go and Python examples](examples/README.md).
+The gateway does not emit CORS response headers, so the origin allowlist does not enable browser CORS. It applies body-size, header, request-timeout, keep-alive, and concurrency limits, does not treat an MCP session as authentication, and does not log request headers or bodies. The OpenAPI facade contains only the same three default tools, or four when writes are explicitly enabled; it is not a 78-operation raw API. See [.env.example](.env.example) and the [Go and Python examples](examples/README.md).
 
 ## Generation and validation
 

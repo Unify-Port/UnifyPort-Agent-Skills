@@ -30,6 +30,8 @@ method、path、header 或 base URL。
 
 - 仅允许 HTTPS 公网目标，并拒绝 loopback、私网和 link-local 地址。
 - signing secret 必须通过 secret reference 提供，且不得返回模型。
+- 已发布契约有 24 个标准事件名。FB 使用 message.received、account.auth.succeeded、account.status.updated、account.auth.failed；received 可入站或出站，授权成功后须检查 runtime，没有 read/delivery receipts。
+- 保留字符串 ID、稀疏 false/zero/空值与 UTC 时间精度；FB 原生媒体 duration 单位未确认，不能推算；call.incoming 仍受 private beta 限制。
 
 ## Operations
 

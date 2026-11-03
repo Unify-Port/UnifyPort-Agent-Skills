@@ -4,7 +4,7 @@
 
 ## Scope
 
-This guide defines how maintainers synchronize the public contract, regenerate artifacts, preserve 64-operation and 16-skill coverage, validate the public boundary, and publish releases.
+This guide defines how maintainers synchronize the public contract, regenerate artifacts, preserve 78-operation and 18-skill coverage, validate the public boundary, and publish releases.
 
 ## Current status
 
@@ -26,7 +26,7 @@ pnpm package:check
 | Artifact                                  | Authority                                                    | May be edited manually?        |
 | ----------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
 | Pinned public SDK dependency              | Public operation and wire metadata                           | Version only, with review      |
-| Capability catalog                        | 16-Skill ownership, access, confirmation, and channel policy | Yes, with review               |
+| Capability catalog                        | 18-Skill ownership, access, confirmation, and channel policy | Yes, with review               |
 | Data-classification policy                | Protected input/output pointers and fail-closed default      | Yes, with security review      |
 | Host adapter inventory                    | Reviewed delivery mode and destination metadata              | Yes; vendor E2E still separate |
 | Generated capability manifest             | Combined public operation and workflow metadata              | No; generated                  |
@@ -60,9 +60,9 @@ The scanner is a guardrail, not a disclosure decision. Reviewers must still reje
 `pnpm capabilities:check` compares the catalog with every operation exported by the public SDK and verifies safety relationships. For the current inventory, require:
 
 ```text
-operation count = 64
-unique operationId count = 64
-workflow count = 16
+operation count = 78
+unique operationId count = 78
+workflow count = 18
 missing SDK assignments = 0
 duplicate catalog assignments = 0
 ```
@@ -75,7 +75,7 @@ After capability validation passes:
 
 1. Run `pnpm generate`.
 2. Review the generated capability manifest and core policy catalog.
-3. Review the four generated bilingual Skill/reference files for each of the 16 workflows.
+3. Review the four generated bilingual Skill/reference files for each of the 18 workflows.
 4. Run `pnpm generate:check` and require no missing or stale output.
 5. Run `pnpm docs:check` and `pnpm public:check`.
 
@@ -83,7 +83,7 @@ Generation is deterministic and offline after dependencies are installed. It mus
 
 ## Skill coverage validation
 
-Every public operation must have exactly one task-skill owner. The current invariant is `64/64` across 16 skills.
+Every public operation must have exactly one task-skill owner. The current invariant is `78/78` across 18 skills.
 
 For each operation, require catalog metadata for access, confirmation, and channel. Validation combines this with the public SDK's method, path, mutability, retryability, and secret-input or secret-output flags, plus classified data pointers where a secure channel is required.
 
@@ -96,7 +96,7 @@ At minimum, releases must validate:
 ### Current catalog and generator
 
 - Catalog and data-policy schema versions are supported.
-- 64 SDK operations have one owner each across 16 workflows.
+- 78 SDK operations have one owner each across 18 workflows.
 - Mutability, confirmation, secret-channel, and classified-pointer relationships pass.
 - Generation is reproducible and every expected generated file is current.
 

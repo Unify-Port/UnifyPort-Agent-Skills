@@ -10,7 +10,7 @@ The policy is fail-closed: content is private unless it is explicitly approved f
 
 ## Current status
 
-The capability catalog covers 64 public SDK operations through 16 task skills. Operation coverage and channel exposure are separate concerns: an operation remains represented when its policy requires secure input or output and it cannot be exposed as a raw model-visible tool.
+The capability catalog covers 78 public SDK operations through 18 task skills. Operation coverage and channel exposure are separate concerns: an operation remains represented when its policy requires secure input or output and it cannot be exposed as a raw model-visible tool.
 
 The current repository implements catalog, generated-file, bilingual-document, and public-pattern checks together with the shared runtime, controlled CLI, stdio MCP, Streamable HTTP/OpenAPI gateway, adapter source, automated npm-tarball expansion/scanning, and complete Git patch-history scanning. These packages are implemented and tested in source but are not yet published to npm. Full standalone-contract sanitization/parity and vendor-hosted adapter validation remain outside current claims. Automated checks supplement human review; a passing scanner does not authorize content that violates this policy.
 
@@ -96,7 +96,7 @@ MCP is model-visible. Tool schemas, calls, results, traces, and errors must not 
 - Projects exactly the same registry through `GET /openapi.json` and `POST /tools/<tool-name>` for OpenAPI consumers.
 - Requires redacted outputs and stable public errors on stdio, Streamable HTTP, and OpenAPI tool calls.
 
-The MCP/OpenAPI adapters must not weaken an operation's classification to increase tool count. Full 64-operation coverage does not imply 64 MCP tools or 64 raw OpenAPI routes. MCP and tool-execution requests require Bearer authentication; schema retrieval does not execute a Device API operation.
+The MCP/OpenAPI adapters must not weaken an operation's classification to increase tool count. Full 78-operation coverage does not imply 78 MCP tools or 78 raw OpenAPI routes. MCP and tool-execution requests require Bearer authentication; schema retrieval does not execute a Device API operation.
 
 ### CLI
 
@@ -149,7 +149,7 @@ Sanitization must not delete a public field or operation merely because it is un
 
 Current automated checks cover:
 
-- Catalog schema, `64/64` unique ownership across 16 Skills, mutability, confirmation, secure-channel, and classified-pointer relationships.
+- Catalog schema, `78/78` unique ownership across 18 Skills, mutability, confirmation, secure-channel, and classified-pointer relationships.
 - Deterministic generated-file freshness.
 - Bilingual Markdown counterparts, language navigation, local links, and Skill frontmatter.
 - Source and present generated/build text patterns for known filesystem paths, private-network URLs, provenance metadata, key material, access tokens, JSON Web Tokens, and hard-coded secret assignments.

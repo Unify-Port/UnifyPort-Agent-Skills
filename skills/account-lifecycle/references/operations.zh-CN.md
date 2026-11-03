@@ -20,7 +20,7 @@
 
 - MCP tool：公开 SDK 策略不允许暴露
 - CLI：`unifyport-agent call createAccount --input-file <path>`
-- 策略：`write`、`confirm`、`secure_input`
+- 策略：`write`、`confirm`、`secure_input_output`
 - 重试：禁止自动重试
 
 ## `getAccount`
@@ -34,7 +34,7 @@
 
 - MCP tool：公开 SDK 策略不允许暴露
 - CLI：`unifyport-agent call updateAccount --input-file <path>`
-- 策略：`write`、`confirm`、`secure_input`
+- 策略：`write`、`confirm`、`secure_input_output`
 - 重试：禁止自动重试
 
 ## `deleteAccount`
@@ -42,4 +42,11 @@
 - MCP tool：公开 SDK 策略不允许暴露
 - CLI：`unifyport-agent call deleteAccount --input-file <path>`
 - 策略：`destructive`、`double_confirm`、`model_safe`
+- 重试：禁止自动重试
+
+## `getAccountOperation`
+
+- MCP tool：公开 SDK 策略不允许暴露
+- CLI：`unifyport-agent call getAccountOperation --input-file <path>`
+- 策略：`read`、`none`、`projected`
 - 重试：禁止自动重试

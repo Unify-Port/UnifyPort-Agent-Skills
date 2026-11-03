@@ -22,3 +22,10 @@
 - CLI：`unifyport-agent call listConversationMembers --input-file <path>`
 - 策略：`read`、`none`、`projected`
 - 重试：公开 SDK 允许有界重试
+
+## `requestConversationHistory`
+
+- MCP tool：公开 SDK 策略不允许暴露
+- CLI：`unifyport-agent call requestConversationHistory --input-file <path>`
+- 策略：`write`、`confirm`、`projected`
+- 重试：禁止自动重试

@@ -33,6 +33,8 @@ boundary; never construct an arbitrary HTTP method, path, header, or base URL.
 
 - Require HTTPS public destinations and reject loopback, private-network, and link-local targets.
 - Signing secrets must be provided through secret references and never returned to the model.
+- The released contract has 24 standard event names. Facebook uses message.received, account.auth.succeeded, account.status.updated and account.auth.failed; received may be inbound or outbound, auth success needs a runtime check, and read/delivery receipts are unavailable.
+- Preserve string IDs, sparse false/zero/empty values and UTC timestamp precision. Never infer a unit for Facebook native media duration; call.incoming remains gated private beta.
 
 ## Operations
 

@@ -46,7 +46,7 @@
 - Secret input 和 output 声明必须映射到经批准的安全通道和已分类 data pointers。
 - 本机路径、私有 host、实现细节、凭证和个人数据不得进入公开产物。
 
-当前 inventory 包含 64 个 operations。如果数量发生变化，pull request 必须说明公开 API 变化、更新 capability catalog 和 data policy、重新生成 artifacts，并包含明确的兼容性评审。
+当前 inventory 包含 78 个 operations。如果数量发生变化，pull request 必须说明公开 API 变化、更新 capability catalog 和 data policy、重新生成 artifacts，并包含明确的兼容性评审。
 
 ## 生成文件
 
@@ -65,10 +65,10 @@ pnpm public:check
 
 ## 任务型 Skill 归属
 
-所有公开 operations 必须唯一映射到 16 个任务型 Skills 之一。新增或移动 operation 时：
+所有公开 operations 必须唯一映射到 18 个任务型 Skills 之一。新增或移动 operation 时：
 
 - 更新机器可读的 ownership manifest。
-- 除非公开契约本身变化，否则保持 `64/64` 覆盖。
+- 除非公开契约本身变化，否则保持 `78/78` 覆盖。
 - 对遗漏或重复归属直接失败。
 - 通过跨 Skill prerequisite 描述依赖，不要把同一个 operation 复制进多个 Skills。
 - 即使某个含 secret 的 operation 只能通过 CLI 或 host 安全通道执行，也必须保留在覆盖范围内。

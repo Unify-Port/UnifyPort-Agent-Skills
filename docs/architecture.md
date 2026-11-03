@@ -14,7 +14,7 @@ The architecture targets three delivery surfaces:
 
 ## Current status
 
-The current capability catalog assigns all 64 operations exported by the public SDK to exactly one of 16 task Skills. The repository implements catalog validation, data classification, deterministic Skill and policy generation, a shared execution runtime, a controlled CLI, stdio MCP, an authenticated Streamable HTTP gateway with a policy-gated OpenAPI facade, adapter source, bilingual-document checks, source/generated public scanning, npm tarball scanning, and full patch-history scanning.
+The current capability catalog assigns all 78 operations exported by the public SDK to exactly one of 18 task Skills. The repository implements catalog validation, data classification, deterministic Skill and policy generation, a shared execution runtime, a controlled CLI, stdio MCP, an authenticated Streamable HTTP gateway with a policy-gated OpenAPI facade, adapter source, bilingual-document checks, source/generated public scanning, npm tarball scanning, and full patch-history scanning.
 
 These components are implemented and tested in source but are not yet published to npm. Directory adapter tests are local integration evidence, not proof of end-to-end behavior in a vendor-hosted environment. TRAE, Dify, and Coze also have different delivery boundaries from native directory Skills.
 
@@ -32,7 +32,7 @@ These components are implemented and tested in source but are not yet published 
 ```mermaid
 flowchart LR
     A["Public SDK operation metadata"] --> D["Capability validation"]
-    B["16-skill capability catalog"] --> D
+    B["18-skill capability catalog"] --> D
     C["Data-classification policy"] --> D
     D --> E["Deterministic generator"]
     E --> F["Capability manifest"]
@@ -57,7 +57,7 @@ The pinned public SDK exports the current operation inventory and public metadat
 `pnpm capabilities:check` fails closed when:
 
 - A catalog operation is unknown to the public SDK or an SDK operation is unassigned.
-- An operation is assigned more than once or the expected 64-operation and 16-skill counts drift.
+- An operation is assigned more than once or the expected 78-operation and 18-skill counts drift.
 - Catalog access weakens the SDK mutability classification.
 - A mutation lacks the required confirmation classification.
 - SDK secret flags do not map to a secure channel and classified data pointer.
@@ -85,15 +85,15 @@ The current generator produces the capability manifest, the core policy catalog,
 `pnpm capabilities:check` compares catalog ownership with the public SDK operation inventory. The current invariant is:
 
 ```text
-public operations = 64
-owned operations = 64
+public operations = 78
+owned operations = 78
 missing ownership = 0
 duplicate ownership = 0
 ```
 
 ## Task-skill layer
 
-The 16 skills are listed in the repository README. They group operations by user intent rather than copying API tags mechanically. A skill contains:
+The 18 skills are listed in the repository README. They group operations by user intent rather than copying API tags mechanically. A skill contains:
 
 - Task framing and reviewed workflow guidance.
 - A credential and untrusted-data boundary.
@@ -159,15 +159,15 @@ The generated host inventory records an explicit installation mode and is consum
 
 The controlled CLI is the preferred surface for secure interactive operations. It reads the API key from `UNIFYPORT_API_KEY`, accepts additional secrets through validated environment references, and writes one-time secret output only to a pre-reserved `0600` file. Secrets are not accepted through ordinary command arguments because process listings and shell history may expose them.
 
-The CLI represents all 64 operations. Writes require both the generated policy and `UNIFYPORT_ALLOW_WRITES=true`; destructive operations additionally require `UNIFYPORT_ALLOW_DESTRUCTIVE=true`. Confirmation and risk acceptance are evaluated separately from secret handling.
+The CLI represents all 78 operations. Writes require both the generated policy and `UNIFYPORT_ALLOW_WRITES=true`; destructive operations additionally require `UNIFYPORT_ALLOW_DESTRUCTIVE=true`. Confirmation and risk acceptance are evaluated separately from secret handling.
 
 ### MCP and OpenAPI facade
 
-MCP is a model-visible boundary. The implemented server exposes only operations whose released SDK policy and current permission switches allow model-safe input and redacted output. Full 64-operation ownership does not require 64 raw MCP tools.
+MCP is a model-visible boundary. The implemented server exposes only operations whose released SDK policy and current permission switches allow model-safe input and redacted output. Full 78-operation ownership does not require 78 raw MCP tools.
 
 By default, stdio MCP and Streamable HTTP expose only `getWorkspace`, `listApiKeys`, and `listProviderRegions`. Exact `UNIFYPORT_ALLOW_WRITES=true` adds `updateApiKeyStatus`; the other 60 operations remain controlled CLI/Skill workflows. Raw secret fields must not appear in MCP schemas, tool calls, tool results, traces, or model context.
 
-The HTTP gateway also serves `GET /openapi.json` and policy-gated `POST /tools/<tool-name>`. The OpenAPI document projects the current MCP registry, so it has the same three-tool default and four-tool explicit-write boundary; it is not a raw 64-operation API. Tool execution and MCP requests require a Bearer Device API key. The schema and health endpoints do not execute Device API operations.
+The HTTP gateway also serves `GET /openapi.json` and policy-gated `POST /tools/<tool-name>`. The OpenAPI document projects the current MCP registry, so it has the same three-tool default and four-tool explicit-write boundary; it is not a raw 78-operation API. Tool execution and MCP requests require a Bearer Device API key. The schema and health endpoints do not execute Device API operations.
 
 The gateway binds to loopback by default. A non-loopback bind additionally requires an explicit public flag, an exact host allowlist, and directly configured TLS certificate/key files. The optional origin allowlist rejects requests carrying an unapproved `Origin` header, but the gateway emits no CORS response headers and does not enable browser CORS. Request-size and header limits, timeouts, and a concurrency ceiling further constrain the remote boundary.
 

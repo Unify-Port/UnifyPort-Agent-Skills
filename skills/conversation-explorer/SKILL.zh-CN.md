@@ -32,10 +32,11 @@ method、path、header 或 base URL。
 
 ## Operations
 
-| operationId               | HTTP                                                  | 权限   | 确认   | 通道        |
-| ------------------------- | ----------------------------------------------------- | ------ | ------ | ----------- |
-| `listConversations`       | `GET /v1/accounts/{account_id}/conversations`         | `read` | `none` | `projected` |
-| `getConversation`         | `GET /v1/accounts/{account_id}/conversations/info`    | `read` | `none` | `projected` |
-| `listConversationMembers` | `GET /v1/accounts/{account_id}/conversations/members` | `read` | `none` | `projected` |
+| operationId                  | HTTP                                                           | 权限    | 确认      | 通道        |
+| ---------------------------- | -------------------------------------------------------------- | ------- | --------- | ----------- |
+| `listConversations`          | `GET /v1/accounts/{account_id}/conversations`                  | `read`  | `none`    | `projected` |
+| `getConversation`            | `GET /v1/accounts/{account_id}/conversations/info`             | `read`  | `none`    | `projected` |
+| `listConversationMembers`    | `GET /v1/accounts/{account_id}/conversations/members`          | `read`  | `none`    | `projected` |
+| `requestConversationHistory` | `POST /v1/accounts/{account_id}/conversations/history/request` | `write` | `confirm` | `projected` |
 
 生成的命令和策略映射见[操作说明](references/operations.zh-CN.md)。

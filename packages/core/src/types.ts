@@ -8,6 +8,8 @@ export type ChannelMode =
 export interface ClassifiedPointer {
   readonly pointer: string;
   readonly classification: string;
+  // 只有显式标注的对象凭证才解析 JSON，避免改变验证码等字符串的语义。
+  readonly encoding?: "json";
   readonly required: boolean;
 }
 

@@ -55,7 +55,9 @@ function safeToolError(error: unknown): string {
   if (!(error instanceof PublicRuntimeError)) return "UNEXPECTED_ERROR";
   const status = error.status === undefined ? "" : ` HTTP_${String(error.status)}`;
   const requestId = error.requestId === undefined ? "" : ` request_id=${error.requestId}`;
-  return `${error.code}${status}${requestId}`;
+  // 只向模型提供已筛选的分类码，原始上游错误仍留在安全边界之外。
+  const numericCode = error.numericCode === undefined ? "" : ` numeric_code=${error.numericCode}`;
+  return `${error.code}${status}${requestId}${numericCode}`;
 }
 
 function toolError(message: string): CallToolResult {

@@ -57,6 +57,32 @@ function declaredProperties(
   return collected;
 }
 
+// 仅公开契约枚举中的运行状态可见，自由形式 OAuth state 仍按凭证剔除。
+function isPublicState(
+  value: unknown,
+  schema: Readonly<Record<string, unknown>>,
+  root: Readonly<Record<string, unknown>>,
+  depth = 0
+): boolean {
+  if (depth > MAX_SCHEMA_DEPTH) return false;
+  if (Array.isArray(schema["enum"])) return schema["enum"].includes(value);
+  if (schema["const"] !== undefined) return schema["const"] === value;
+  const reference = schema["$ref"];
+  if (typeof reference === "string") {
+    const target = localDefinition(root, reference);
+    return target !== undefined && isPublicState(value, target, root, depth + 1);
+  }
+  return ["anyOf", "oneOf", "allOf"].some((keyword) => {
+    const branches = schema[keyword];
+    return (
+      Array.isArray(branches) &&
+      branches.some(
+        (branch: unknown) => isRecord(branch) && isPublicState(value, branch, root, depth + 1)
+      )
+    );
+  });
+}
+
 function projectValue(
   value: unknown,
   schema: Readonly<Record<string, unknown>>,
@@ -82,11 +108,22 @@ function projectValue(
   const properties = declaredProperties(schema, root, depth + 1);
   const projected: Record<string, unknown> = {};
   for (const [name, child] of Object.entries(value)) {
-    if (redactSensitive && SENSITIVE_FIELD.test(name)) continue;
     const candidates = properties.get(name);
     if (candidates === undefined || candidates.length === 0) continue;
     const childSchema = candidates.length === 1 ? candidates[0] : { anyOf: candidates };
     if (childSchema === undefined) continue;
+    if (
+      redactSensitive &&
+      SENSITIVE_FIELD.test(name) &&
+      !(name === "state" && isPublicState(child, childSchema, root)) &&
+      // 业务操作的公开错误分类不是授权 code，仍限定为短机器码。
+      !(
+        name === "last_error_code" &&
+        typeof child === "string" &&
+        /^[A-Za-z0-9_.:-]{1,64}$/u.test(child)
+      )
+    )
+      continue;
     projected[name] = projectValue(child, childSchema, root, redactSensitive, depth + 1);
   }
   return projected;

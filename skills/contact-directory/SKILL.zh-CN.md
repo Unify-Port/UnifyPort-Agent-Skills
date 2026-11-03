@@ -32,10 +32,12 @@ method、path、header 或 base URL。
 
 ## Operations
 
-| operationId            | HTTP                                               | 权限   | 确认   | 通道        |
-| ---------------------- | -------------------------------------------------- | ------ | ------ | ----------- |
-| `listContacts`         | `GET /v1/accounts/{account_id}/contacts`           | `read` | `none` | `projected` |
-| `getContact`           | `GET /v1/accounts/{account_id}/contacts/info`      | `read` | `none` | `projected` |
-| `listContactBlocklist` | `GET /v1/accounts/{account_id}/contacts/blocklist` | `read` | `none` | `projected` |
+| operationId            | HTTP                                                | 权限    | 确认      | 通道        |
+| ---------------------- | --------------------------------------------------- | ------- | --------- | ----------- |
+| `listContacts`         | `GET /v1/accounts/{account_id}/contacts`            | `read`  | `none`    | `projected` |
+| `getContact`           | `GET /v1/accounts/{account_id}/contacts/info`       | `read`  | `none`    | `projected` |
+| `listContactBlocklist` | `GET /v1/accounts/{account_id}/contacts/blocklist`  | `read`  | `none`    | `projected` |
+| `createContact`        | `POST /v1/accounts/{account_id}/contacts/add`       | `write` | `confirm` | `projected` |
+| `getContactMembership` | `GET /v1/accounts/{account_id}/contacts/membership` | `read`  | `none`    | `projected` |
 
 生成的命令和策略映射见[操作说明](references/operations.zh-CN.md)。

@@ -251,7 +251,16 @@ export class AgentRuntime {
       if (value === undefined) {
         throw new PublicRuntimeError("SECRET_NOT_FOUND", "A referenced secret is unavailable");
       }
-      setPointer(projected, entry.pointer, value);
+      // 对象凭证从安全引用解码；解析错误不能回显原始凭证片段。
+      let resolved: unknown = value;
+      if (entry.encoding === "json") {
+        try {
+          resolved = JSON.parse(value);
+        } catch {
+          throw new PublicRuntimeError("INVALID_SECRET", "Referenced secret must contain JSON");
+        }
+      }
+      setPointer(projected, entry.pointer, resolved);
     }
     serializedSize(projected, this.#options.config.maxInputBytes, "Resolved operation input");
     const validate = this.#inputValidator(operation);
@@ -261,6 +270,15 @@ export class AgentRuntime {
         "INVALID_INPUT",
         "Input does not match the public operation schema"
       );
+    }
+    // FB 仅支持 session 导入，不能因为公共 provider schema 较宽就启动 QR/code 授权。
+    if (
+      operation.policy.operationId === "createAccount" &&
+      isRecord(projected["body"]) &&
+      projected["body"]["provider"] === "facebook" &&
+      projected["body"]["auth_mode"] !== "session"
+    ) {
+      throw new PublicRuntimeError("INVALID_INPUT", "Facebook requires session authorization");
     }
     validateNetworkBoundary(operation.policy.operationId, projected);
     return projected;

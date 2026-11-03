@@ -32,19 +32,23 @@ boundary; never construct an arbitrary HTTP method, path, header, or base URL.
    accepted response alone.
 
 - Run authentication as a bounded state machine with an expiry and polling limit.
-- QR payloads, codes, passwords, and sessions never belong in model context or logs.
+- QR payloads, codes, passwords, WebAuthn responses, and sessions never belong in model context or logs. Use a secure sink for auth-session and Passkey outputs.
+- Facebook supports session import only: use a short-lived controlled session_url secret reference, then query runtime; auth success is not proof of running.
 
 ## Operations
 
-| operationId                 | HTTP                                           | Access  | Confirmation  | Channel         |
-| --------------------------- | ---------------------------------------------- | ------- | ------------- | --------------- |
-| `getAccountAuthState`       | `GET /v1/accounts/{account_id}/auth`           | `read`  | `none`        | `secure_output` |
-| `startAccountAuth`          | `POST /v1/accounts/{account_id}/auth/start`    | `write` | `interactive` | `secure_output` |
-| `startAccountQrAuth`        | `POST /v1/accounts/{account_id}/auth/qr/start` | `write` | `interactive` | `secure_output` |
-| `checkAccountQrAuth`        | `POST /v1/accounts/{account_id}/auth/qr/check` | `write` | `interactive` | `secure_output` |
-| `submitAccountAuthCode`     | `POST /v1/accounts/{account_id}/auth/code`     | `write` | `interactive` | `secure_input`  |
-| `submitAccountAuthPassword` | `POST /v1/accounts/{account_id}/auth/password` | `write` | `interactive` | `secure_input`  |
-| `importAccountAuthSession`  | `POST /v1/accounts/{account_id}/auth/session`  | `write` | `confirm`     | `secure_input`  |
-| `cancelAccountAuth`         | `POST /v1/accounts/{account_id}/auth/cancel`   | `write` | `confirm`     | `model_safe`    |
+| operationId                    | HTTP                                                   | Access  | Confirmation  | Channel               |
+| ------------------------------ | ------------------------------------------------------ | ------- | ------------- | --------------------- |
+| `getAccountAuthState`          | `GET /v1/accounts/{account_id}/auth`                   | `read`  | `none`        | `secure_output`       |
+| `startAccountAuth`             | `POST /v1/accounts/{account_id}/auth/start`            | `write` | `interactive` | `secure_output`       |
+| `startAccountQrAuth`           | `POST /v1/accounts/{account_id}/auth/qr/start`         | `write` | `interactive` | `secure_output`       |
+| `checkAccountQrAuth`           | `POST /v1/accounts/{account_id}/auth/qr/check`         | `write` | `interactive` | `secure_output`       |
+| `submitAccountAuthCode`        | `POST /v1/accounts/{account_id}/auth/code`             | `write` | `interactive` | `secure_input`        |
+| `submitAccountAuthPassword`    | `POST /v1/accounts/{account_id}/auth/password`         | `write` | `interactive` | `secure_input`        |
+| `importAccountAuthSession`     | `POST /v1/accounts/{account_id}/auth/session`          | `write` | `confirm`     | `secure_input`        |
+| `cancelAccountAuth`            | `POST /v1/accounts/{account_id}/auth/cancel`           | `write` | `confirm`     | `model_safe`          |
+| `createAccountAuthSession`     | `POST /v1/accounts/{account_id}/auth-sessions`         | `write` | `confirm`     | `secure_output`       |
+| `submitAccountPasskeyResponse` | `POST /v1/accounts/{account_id}/auth/passkey-response` | `write` | `confirm`     | `secure_input_output` |
+| `confirmAccountPasskey`        | `POST /v1/accounts/{account_id}/auth/passkey-confirm`  | `write` | `confirm`     | `secure_output`       |
 
 See [operation notes](references/operations.md) for the generated command and policy mapping.

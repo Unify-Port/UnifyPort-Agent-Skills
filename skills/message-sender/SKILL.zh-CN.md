@@ -29,12 +29,13 @@ method、path、header 或 base URL。
 4. 仅报告安全投影后的结果与 request ID；异步操作只返回 accepted 时，不得声称任务已完成。
 
 - 展示账号、目标、类型和内容摘要后，只向一个明确目标发送。
-- accepted 不代表 delivered；结果不确定的写请求禁止自动重试。
+- accepted 不代表 delivered；结果不确定的写请求禁止自动重试；reply_token 输出仅进入安全 sink。
+- Facebook 必须先确认 runtime_status=running，并原样保留 E2EE user 会话字符串 ID。仅发送单条文本或单个媒体，不附 caption，不支持群、引用、mentions 或消息操作；audio 为部分支持。
 
 ## Operations
 
-| operationId   | HTTP                | 权限    | 确认      | 通道           |
-| ------------- | ------------------- | ------- | --------- | -------------- |
-| `sendMessage` | `POST /v1/messages` | `write` | `confirm` | `secure_input` |
+| operationId   | HTTP                | 权限    | 确认      | 通道                  |
+| ------------- | ------------------- | ------- | --------- | --------------------- |
+| `sendMessage` | `POST /v1/messages` | `write` | `confirm` | `secure_input_output` |
 
 生成的命令和策略映射见[操作说明](references/operations.zh-CN.md)。

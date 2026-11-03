@@ -66,13 +66,13 @@ describe("host adapters", () => {
 });
 
 describe("installCanonicalSkills", () => {
-  it("installs all 16 canonical Skill directories and skips identical files", async () => {
+  it("installs all 18 canonical Skill directories and skips identical files", async () => {
     const root = await temporaryDirectory();
     const first = await installCanonicalSkills({ host: "codex", rootDirectory: root });
     expect(first).toMatchObject({
       installDirectory: ".agents/skills",
-      skills: 16,
-      installedFiles: 64,
+      skills: 18,
+      installedFiles: 72,
       skippedFiles: 0
     });
     expect(JSON.stringify(first)).not.toContain(root);
@@ -86,7 +86,7 @@ describe("installCanonicalSkills", () => {
     }
 
     const second = await installCanonicalSkills({ host: "codex", rootDirectory: root });
-    expect(second).toMatchObject({ skills: 16, installedFiles: 0, skippedFiles: 64 });
+    expect(second).toMatchObject({ skills: 18, installedFiles: 0, skippedFiles: 72 });
   });
 
   it("refuses conflicts by default and overwrites only with explicit opt-in", async () => {

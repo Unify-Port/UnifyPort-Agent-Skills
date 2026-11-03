@@ -27,7 +27,7 @@ Dify 和 Coze 是 platform integrations，不是原生 Agent Skills。TRAE 是�
 
 ## 目录 installers
 
-从源码完成构建后，将全部 16 个 canonical Skills 安装到受支持 host 目录：
+从源码完成构建后，将全部 18 个 canonical Skills 安装到受支持 host 目录：
 
 ```bash
 unifyport-agent install --host codex --scope project
@@ -60,7 +60,7 @@ Dify 和 Coze 消费 platform-specific integration recipes，而不是 Agent Ski
 - Dify 作为 MCP provider 直接连接带鉴权的 Streamable HTTP MCP endpoint。
 - Coze 将 `GET /openapi.json` 导入为 custom OpenAPI plugin，并调用投影后的 `POST /tools/<tool-name>` routes。
 
-只有应用[远程 gateway 控制](../README.zh-CN.md#远程-gateway-边界)后才能部署 gateway。Bearer API Key 必须存入平台受保护 credential facility，并在每个 MCP 或 tool-execution request 中提供。两种 integration 都只暴露 policy-gated registry：默认集合是 `getWorkspace`、`listApiKeys` 和 `listProviderRegions`；`UNIFYPORT_ALLOW_WRITES=true` 只会再增加 `updateApiKeyStatus`。OpenAPI facade 不是包含 64 个 operations 的原始 API，其余能力仍保留在受控 CLI/Skills surface。
+只有应用[远程 gateway 控制](../README.zh-CN.md#远程-gateway-边界)后才能部署 gateway。Bearer API Key 必须存入平台受保护 credential facility，并在每个 MCP 或 tool-execution request 中提供。两种 integration 都只暴露 policy-gated registry：默认集合是 `getWorkspace`、`listApiKeys` 和 `listProviderRegions`；`UNIFYPORT_ALLOW_WRITES=true` 只会再增加 `updateApiKeyStatus`。OpenAPI facade 不是包含 78 个 operations 的原始 API，其余能力仍保留在受控 CLI/Skills surface。
 
 Browser CORS 未启用。`UNIFYPORT_GATEWAY_ALLOWED_ORIGINS` 只拒绝包含未批准 `Origin` header 的请求；gateway 不返回 CORS response headers。
 

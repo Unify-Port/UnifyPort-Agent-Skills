@@ -35,10 +35,12 @@ boundary; never construct an arbitrary HTTP method, path, header, or base URL.
 
 ## Operations
 
-| operationId            | HTTP                                               | Access | Confirmation | Channel     |
-| ---------------------- | -------------------------------------------------- | ------ | ------------ | ----------- |
-| `listContacts`         | `GET /v1/accounts/{account_id}/contacts`           | `read` | `none`       | `projected` |
-| `getContact`           | `GET /v1/accounts/{account_id}/contacts/info`      | `read` | `none`       | `projected` |
-| `listContactBlocklist` | `GET /v1/accounts/{account_id}/contacts/blocklist` | `read` | `none`       | `projected` |
+| operationId            | HTTP                                                | Access  | Confirmation | Channel     |
+| ---------------------- | --------------------------------------------------- | ------- | ------------ | ----------- |
+| `listContacts`         | `GET /v1/accounts/{account_id}/contacts`            | `read`  | `none`       | `projected` |
+| `getContact`           | `GET /v1/accounts/{account_id}/contacts/info`       | `read`  | `none`       | `projected` |
+| `listContactBlocklist` | `GET /v1/accounts/{account_id}/contacts/blocklist`  | `read`  | `none`       | `projected` |
+| `createContact`        | `POST /v1/accounts/{account_id}/contacts/add`       | `write` | `confirm`    | `projected` |
+| `getContactMembership` | `GET /v1/accounts/{account_id}/contacts/membership` | `read`  | `none`       | `projected` |
 
 See [operation notes](references/operations.md) for the generated command and policy mapping.
