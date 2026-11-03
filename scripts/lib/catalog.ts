@@ -37,6 +37,8 @@ export interface CapabilityCatalog {
 export interface ClassifiedPointer {
   readonly pointer: string;
   readonly classification: string;
+  // 只有显式标注的对象凭证才解析 JSON，避免改变验证码等字符串的语义。
+  readonly encoding?: "json";
   readonly required: boolean;
 }
 
@@ -155,7 +157,11 @@ function classifiedPointers(value: unknown, label: string): readonly ClassifiedP
   if (value === undefined) return [];
   return requiredArray(value, label).map((pointerValue, index) => {
     const pointer = requiredRecord(pointerValue, `${label}[${String(index)}]`);
+    if (pointer["encoding"] !== undefined && pointer["encoding"] !== "json") {
+      throw new Error(`${label}.encoding must be json`);
+    }
     return {
+      ...(pointer["encoding"] === "json" ? { encoding: "json" as const } : {}),
       pointer: requiredString(pointer["pointer"], `${label}.pointer`),
       classification: requiredString(pointer["classification"], `${label}.classification`),
       required: pointer["required"] === true

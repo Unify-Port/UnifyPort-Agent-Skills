@@ -9,17 +9,27 @@ function safeDiagnostic(value: string, fallback: string, maximumLength: number):
 export class PublicRuntimeError extends Error {
   public readonly code: string;
   public readonly status: number | undefined;
+  public readonly numericCode: string | undefined;
   public readonly requestId: string | undefined;
 
   public constructor(
     code: string,
     message: string,
-    context: { readonly status?: number; readonly requestId?: string } = {}
+    context: {
+      readonly status?: number;
+      readonly requestId?: string;
+      readonly numericCode?: string;
+    } = {}
   ) {
     super(message);
     this.name = "PublicRuntimeError";
     this.code = safeDiagnostic(code, "UNEXPECTED_ERROR", 64);
     this.status = context.status;
+    // 数字码仍是分类字符串，只开放五位数字，不回显上游 details 或 message。
+    this.numericCode =
+      context.numericCode !== undefined && /^\d{5}$/u.test(context.numericCode)
+        ? context.numericCode
+        : undefined;
     this.requestId = context.requestId;
   }
 }
@@ -32,6 +42,7 @@ export function safeRuntimeError(error: unknown): PublicRuntimeError {
       "UnifyPort API request failed",
       {
         status: error.status,
+        ...(error.numericCode === undefined ? {} : { numericCode: error.numericCode }),
         ...(error.requestId === undefined
           ? {}
           : { requestId: safeDiagnostic(error.requestId, "redacted", 128) })

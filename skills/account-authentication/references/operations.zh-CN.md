@@ -57,3 +57,24 @@
 - CLI：`unifyport-agent call cancelAccountAuth --input-file <path>`
 - 策略：`write`、`confirm`、`model_safe`
 - 重试：禁止自动重试
+
+## `createAccountAuthSession`
+
+- MCP tool：公开 SDK 策略不允许暴露
+- CLI：`unifyport-agent call createAccountAuthSession --input-file <path>`
+- 策略：`write`、`confirm`、`secure_output`
+- 重试：禁止自动重试
+
+## `submitAccountPasskeyResponse`
+
+- MCP tool：公开 SDK 策略不允许暴露
+- CLI：`unifyport-agent call submitAccountPasskeyResponse --input-file <path>`
+- 策略：`write`、`confirm`、`secure_input_output`
+- 重试：禁止自动重试
+
+## `confirmAccountPasskey`
+
+- MCP tool：公开 SDK 策略不允许暴露
+- CLI：`unifyport-agent call confirmAccountPasskey --input-file <path>`
+- 策略：`write`、`confirm`、`secure_output`
+- 重试：禁止自动重试

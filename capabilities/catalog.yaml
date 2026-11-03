@@ -1,6 +1,6 @@
 schema_version: 1
-expected_operation_count: 64
-expected_workflow_count: 16
+expected_operation_count: 78
+expected_workflow_count: 18
 
 # 每个公开 operation 必须且只能归属一个任务型 Skill；新增 operation 默认无法通过校验。
 workflows:
@@ -66,7 +66,7 @@ workflows:
       - id: createAccount
         access: write
         confirmation: confirm
-        channel: secure_input
+        channel: secure_input_output
       - id: getAccount
         access: read
         confirmation: none
@@ -74,11 +74,16 @@ workflows:
       - id: updateAccount
         access: write
         confirmation: confirm
-        channel: secure_input
+        channel: secure_input_output
       - id: deleteAccount
         access: destructive
         confirmation: double_confirm
         channel: model_safe
+
+      - id: getAccountOperation
+        access: read
+        confirmation: none
+        channel: projected
 
   - id: account-authentication
     title: Account authentication
@@ -118,6 +123,19 @@ workflows:
         access: write
         confirmation: confirm
         channel: model_safe
+
+      - id: createAccountAuthSession
+        access: write
+        confirmation: confirm
+        channel: secure_output
+      - id: submitAccountPasskeyResponse
+        access: write
+        confirmation: confirm
+        channel: secure_input_output
+      - id: confirmAccountPasskey
+        access: write
+        confirmation: confirm
+        channel: secure_output
 
   - id: account-runtime
     title: Account runtime
@@ -159,6 +177,11 @@ workflows:
       - id: listConversationMembers
         access: read
         confirmation: none
+        channel: projected
+
+      - id: requestConversationHistory
+        access: write
+        confirmation: confirm
         channel: projected
 
   - id: conversation-state
@@ -230,6 +253,15 @@ workflows:
         confirmation: none
         channel: projected
       - id: listContactBlocklist
+        access: read
+        confirmation: none
+        channel: projected
+
+      - id: createContact
+        access: write
+        confirmation: confirm
+        channel: projected
+      - id: getContactMembership
         access: read
         confirmation: none
         channel: projected
@@ -316,7 +348,7 @@ workflows:
       - id: sendMessage
         access: write
         confirmation: confirm
-        channel: secure_input
+        channel: secure_input_output
 
   - id: message-actions
     title: Message actions
@@ -371,3 +403,46 @@ workflows:
         access: write
         confirmation: confirm
         channel: model_safe
+
+  # 新任务只补齐受控执行面，不能扩大 SDK 的 MCP 白名单。
+  - id: posts-comments
+    title: Posts and comments
+    title_zh: 帖子与评论
+    description: Inspect posts and comments, then submit one explicitly approved reply.
+    description_zh: 查询帖子与评论，并提交一次明确批准的回复。
+    operations:
+      - id: listPosts
+        access: read
+        confirmation: none
+        channel: projected
+      - id: getPost
+        access: read
+        confirmation: none
+        channel: projected
+      - id: listPostComments
+        access: read
+        confirmation: none
+        channel: projected
+      - id: replyPostComment
+        access: write
+        confirmation: confirm
+        channel: projected
+
+  - id: calls
+    title: Calls
+    title_zh: 通话
+    description: Prepare, inspect, or end a beta-gated call without automatic dialing or retries.
+    description_zh: 在服务端内测权限约束下准备、查询或结束通话，不自动拨号或重试。
+    operations:
+      - id: createCall
+        access: write
+        confirmation: confirm
+        channel: secure_output
+      - id: getActiveCall
+        access: read
+        confirmation: none
+        channel: projected
+      - id: hangupCall
+        access: destructive
+        confirmation: double_confirm
+        channel: projected

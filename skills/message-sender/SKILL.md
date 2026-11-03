@@ -32,12 +32,13 @@ boundary; never construct an arbitrary HTTP method, path, header, or base URL.
    accepted response alone.
 
 - Send to one explicit destination after showing account, destination, type, and a content summary.
-- An accepted response is not proof of delivery; never retry an ambiguous write automatically.
+- An accepted response is not proof of delivery; never retry an ambiguous write automatically. Send reply_token outputs only to a secure sink.
+- Facebook requires runtime_status=running and an E2EE user conversation ID preserved as a string. Send one text or media item, without caption, groups, quotes, mentions, or message actions; audio remains partial support.
 
 ## Operations
 
-| operationId   | HTTP                | Access  | Confirmation | Channel        |
-| ------------- | ------------------- | ------- | ------------ | -------------- |
-| `sendMessage` | `POST /v1/messages` | `write` | `confirm`    | `secure_input` |
+| operationId   | HTTP                | Access  | Confirmation | Channel               |
+| ------------- | ------------------- | ------- | ------------ | --------------------- |
+| `sendMessage` | `POST /v1/messages` | `write` | `confirm`    | `secure_input_output` |
 
 See [operation notes](references/operations.md) for the generated command and policy mapping.

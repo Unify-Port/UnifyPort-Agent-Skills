@@ -29,19 +29,23 @@ method、path、header 或 base URL。
 4. 仅报告安全投影后的结果与 request ID；异步操作只返回 accepted 时，不得声称任务已完成。
 
 - 授权必须作为带过期时间和轮询上限的有界状态机执行。
-- QR payload、验证码、密码和 session 禁止进入模型上下文或日志。
+- QR payload、验证码、密码、WebAuthn 响应和 session 禁止进入模型或日志；auth-session 与 Passkey 输出使用安全 sink。
+- Facebook 仅支持 session 导入：通过 secret reference 提供短时受控 session_url，授权后查询 runtime；授权成功不等于 running。
 
 ## Operations
 
-| operationId                 | HTTP                                           | 权限    | 确认          | 通道            |
-| --------------------------- | ---------------------------------------------- | ------- | ------------- | --------------- |
-| `getAccountAuthState`       | `GET /v1/accounts/{account_id}/auth`           | `read`  | `none`        | `secure_output` |
-| `startAccountAuth`          | `POST /v1/accounts/{account_id}/auth/start`    | `write` | `interactive` | `secure_output` |
-| `startAccountQrAuth`        | `POST /v1/accounts/{account_id}/auth/qr/start` | `write` | `interactive` | `secure_output` |
-| `checkAccountQrAuth`        | `POST /v1/accounts/{account_id}/auth/qr/check` | `write` | `interactive` | `secure_output` |
-| `submitAccountAuthCode`     | `POST /v1/accounts/{account_id}/auth/code`     | `write` | `interactive` | `secure_input`  |
-| `submitAccountAuthPassword` | `POST /v1/accounts/{account_id}/auth/password` | `write` | `interactive` | `secure_input`  |
-| `importAccountAuthSession`  | `POST /v1/accounts/{account_id}/auth/session`  | `write` | `confirm`     | `secure_input`  |
-| `cancelAccountAuth`         | `POST /v1/accounts/{account_id}/auth/cancel`   | `write` | `confirm`     | `model_safe`    |
+| operationId                    | HTTP                                                   | 权限    | 确认          | 通道                  |
+| ------------------------------ | ------------------------------------------------------ | ------- | ------------- | --------------------- |
+| `getAccountAuthState`          | `GET /v1/accounts/{account_id}/auth`                   | `read`  | `none`        | `secure_output`       |
+| `startAccountAuth`             | `POST /v1/accounts/{account_id}/auth/start`            | `write` | `interactive` | `secure_output`       |
+| `startAccountQrAuth`           | `POST /v1/accounts/{account_id}/auth/qr/start`         | `write` | `interactive` | `secure_output`       |
+| `checkAccountQrAuth`           | `POST /v1/accounts/{account_id}/auth/qr/check`         | `write` | `interactive` | `secure_output`       |
+| `submitAccountAuthCode`        | `POST /v1/accounts/{account_id}/auth/code`             | `write` | `interactive` | `secure_input`        |
+| `submitAccountAuthPassword`    | `POST /v1/accounts/{account_id}/auth/password`         | `write` | `interactive` | `secure_input`        |
+| `importAccountAuthSession`     | `POST /v1/accounts/{account_id}/auth/session`          | `write` | `confirm`     | `secure_input`        |
+| `cancelAccountAuth`            | `POST /v1/accounts/{account_id}/auth/cancel`           | `write` | `confirm`     | `model_safe`          |
+| `createAccountAuthSession`     | `POST /v1/accounts/{account_id}/auth-sessions`         | `write` | `confirm`     | `secure_output`       |
+| `submitAccountPasskeyResponse` | `POST /v1/accounts/{account_id}/auth/passkey-response` | `write` | `confirm`     | `secure_input_output` |
+| `confirmAccountPasskey`        | `POST /v1/accounts/{account_id}/auth/passkey-confirm`  | `write` | `confirm`     | `secure_output`       |
 
 生成的命令和策略映射见[操作说明](references/operations.zh-CN.md)。

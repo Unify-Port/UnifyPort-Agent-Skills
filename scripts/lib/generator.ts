@@ -150,7 +150,24 @@ async function formattedSource(source: string, parser: "markdown" | "typescript"
   });
 }
 
+// 工作流只指导受控操作，不扩大模型可见 MCP 工具范围。
 const WORKFLOW_GUIDANCE: Readonly<Record<string, LocalizedGuidance>> = {
+  "posts-comments": {
+    en: [
+      "Check provider capability before reading posts or comments. Confirm the exact post, comment and reply content; Facebook does not support this workflow."
+    ],
+    zh: [
+      "先检查 provider 能力再读取帖子或评论。回复前确认目标帖子、评论和内容；Facebook 不支持此工作流。"
+    ]
+  },
+  calls: {
+    en: [
+      "Calls require server-side private beta eligibility. Creating or hanging up a call needs explicit confirmation; never dial automatically. Join URLs belong only in a secure sink."
+    ],
+    zh: [
+      "通话要求服务端 private beta 资格。发起或挂断必须明确确认，禁止自动拨号；join URL 仅进入安全 sink。"
+    ]
+  },
   "workspace-overview": {
     en: ["Use this as the authentication and quota preflight for a larger workflow."],
     zh: ["将本 Skill 作为其他工作流的鉴权和配额预检。"]
@@ -172,28 +189,36 @@ const WORKFLOW_GUIDANCE: Readonly<Record<string, LocalizedGuidance>> = {
   "account-lifecycle": {
     en: [
       "Resolve the provider and region before creation; do not infer provider support from an empty region list.",
-      "Provider data and proxy credentials must be supplied through secret references."
+      "Provider data and proxy credentials must be supplied as JSON through secret references; account provider profiles go only to a secure sink.",
+      "For Facebook create a session account in an allocatable region. Bound account pagination; after a 202 deletion query getAccountOperation until terminal or the caller limit, and accept legacy 204 without inventing an operation ID."
     ],
     zh: [
       "创建前先确认 provider 与 region；region 为空不代表 provider 一定无效。",
-      "provider data 与 proxy 凭证必须通过 secret reference 提供。"
+      "provider data 与 proxy 凭证必须通过 JSON secret reference 提供；账号 provider profile 仅进入安全 sink。",
+      "Facebook 仅创建 session 账号并选择可分配 region。限制账号翻页；删除返回 202 后有界查询 getAccountOperation，兼容 204 且不虚构 operation ID。"
     ]
   },
   "account-authentication": {
     en: [
       "Run authentication as a bounded state machine with an expiry and polling limit.",
-      "QR payloads, codes, passwords, and sessions never belong in model context or logs."
+      "QR payloads, codes, passwords, WebAuthn responses, and sessions never belong in model context or logs. Use a secure sink for auth-session and Passkey outputs.",
+      "Facebook supports session import only: use a short-lived controlled session_url secret reference, then query runtime; auth success is not proof of running."
     ],
     zh: [
       "授权必须作为带过期时间和轮询上限的有界状态机执行。",
-      "QR payload、验证码、密码和 session 禁止进入模型上下文或日志。"
+      "QR payload、验证码、密码、WebAuthn 响应和 session 禁止进入模型或日志；auth-session 与 Passkey 输出使用安全 sink。",
+      "Facebook 仅支持 session 导入：通过 secret reference 提供短时受控 session_url，授权后查询 runtime；授权成功不等于 running。"
     ]
   },
   "account-runtime": {
     en: [
-      "Report both operation acceptance and observed runtime state; HTTP success is not stability."
+      "Report both operation acceptance and observed runtime state; HTTP success is not stability.",
+      "Facebook authorization is separate from runtime readiness. Bound refresh while starting; start/reconnect only with explicit intent. A runtime error does not itself revoke authorization."
     ],
-    zh: ["同时报告操作受理结果与实际 runtime 状态；HTTP 成功不等于连接稳定。"]
+    zh: [
+      "同时报告操作受理结果与实际 runtime 状态；HTTP 成功不等于连接稳定。",
+      "Facebook 授权与 runtime readiness 分开判断。starting 时有界刷新；start/reconnect 必须有明确意图。runtime error 本身不等于撤销授权。"
+    ]
   },
   "conversation-explorer": {
     en: ["Preserve provider-issued conversation identifiers exactly and bound cursor pagination."],
@@ -236,11 +261,13 @@ const WORKFLOW_GUIDANCE: Readonly<Record<string, LocalizedGuidance>> = {
   "message-sender": {
     en: [
       "Send to one explicit destination after showing account, destination, type, and a content summary.",
-      "An accepted response is not proof of delivery; never retry an ambiguous write automatically."
+      "An accepted response is not proof of delivery; never retry an ambiguous write automatically. Send reply_token outputs only to a secure sink.",
+      "Facebook requires runtime_status=running and an E2EE user conversation ID preserved as a string. Send one text or media item, without caption, groups, quotes, mentions, or message actions; audio remains partial support."
     ],
     zh: [
       "展示账号、目标、类型和内容摘要后，只向一个明确目标发送。",
-      "accepted 不代表 delivered；结果不确定的写请求禁止自动重试。"
+      "accepted 不代表 delivered；结果不确定的写请求禁止自动重试；reply_token 输出仅进入安全 sink。",
+      "Facebook 必须先确认 runtime_status=running，并原样保留 E2EE user 会话字符串 ID。仅发送单条文本或单个媒体，不附 caption，不支持群、引用、mentions 或消息操作；audio 为部分支持。"
     ]
   },
   "message-actions": {
@@ -252,11 +279,15 @@ const WORKFLOW_GUIDANCE: Readonly<Record<string, LocalizedGuidance>> = {
   "webhook-endpoints": {
     en: [
       "Require HTTPS public destinations and reject loopback, private-network, and link-local targets.",
-      "Signing secrets must be provided through secret references and never returned to the model."
+      "Signing secrets must be provided through secret references and never returned to the model.",
+      "The released contract has 24 standard event names. Facebook uses message.received, account.auth.succeeded, account.status.updated and account.auth.failed; received may be inbound or outbound, auth success needs a runtime check, and read/delivery receipts are unavailable.",
+      "Preserve string IDs, sparse false/zero/empty values and UTC timestamp precision. Never infer a unit for Facebook native media duration; call.incoming remains gated private beta."
     ],
     zh: [
       "仅允许 HTTPS 公网目标，并拒绝 loopback、私网和 link-local 地址。",
-      "signing secret 必须通过 secret reference 提供，且不得返回模型。"
+      "signing secret 必须通过 secret reference 提供，且不得返回模型。",
+      "已发布契约有 24 个标准事件名。FB 使用 message.received、account.auth.succeeded、account.status.updated、account.auth.failed；received 可入站或出站，授权成功后须检查 runtime，没有 read/delivery receipts。",
+      "保留字符串 ID、稀疏 false/zero/空值与 UTC 时间精度；FB 原生媒体 duration 单位未确认，不能推算；call.incoming 仍受 private beta 限制。"
     ]
   }
 };

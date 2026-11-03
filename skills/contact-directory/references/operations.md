@@ -22,3 +22,17 @@
 - CLI: `unifyport-agent call listContactBlocklist --input-file <path>`
 - Policy: `read`, `none`, `projected`
 - Retry: bounded retry permitted by the public SDK
+
+## `createContact`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call createContact --input-file <path>`
+- Policy: `write`, `confirm`, `projected`
+- Retry: never retry automatically
+
+## `getContactMembership`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call getContactMembership --input-file <path>`
+- Policy: `read`, `none`, `projected`
+- Retry: never retry automatically

@@ -29,17 +29,19 @@ method、path、header 或 base URL。
 4. 仅报告安全投影后的结果与 request ID；异步操作只返回 accepted 时，不得声称任务已完成。
 
 - 创建前先确认 provider 与 region；region 为空不代表 provider 一定无效。
-- provider data 与 proxy 凭证必须通过 secret reference 提供。
+- provider data 与 proxy 凭证必须通过 JSON secret reference 提供；账号 provider profile 仅进入安全 sink。
+- Facebook 仅创建 session 账号并选择可分配 region。限制账号翻页；删除返回 202 后有界查询 getAccountOperation，兼容 204 且不虚构 operation ID。
 
 ## Operations
 
-| operationId           | HTTP                                   | 权限          | 确认             | 通道           |
-| --------------------- | -------------------------------------- | ------------- | ---------------- | -------------- |
-| `listProviderRegions` | `GET /v1/providers/{provider}/regions` | `read`        | `none`           | `model_safe`   |
-| `listAccounts`        | `GET /v1/accounts`                     | `read`        | `none`           | `projected`    |
-| `createAccount`       | `POST /v1/accounts`                    | `write`       | `confirm`        | `secure_input` |
-| `getAccount`          | `GET /v1/accounts/{account_id}`        | `read`        | `none`           | `projected`    |
-| `updateAccount`       | `PATCH /v1/accounts/{account_id}`      | `write`       | `confirm`        | `secure_input` |
-| `deleteAccount`       | `DELETE /v1/accounts/{account_id}`     | `destructive` | `double_confirm` | `model_safe`   |
+| operationId           | HTTP                                        | 权限          | 确认             | 通道                  |
+| --------------------- | ------------------------------------------- | ------------- | ---------------- | --------------------- |
+| `listProviderRegions` | `GET /v1/providers/{provider}/regions`      | `read`        | `none`           | `model_safe`          |
+| `listAccounts`        | `GET /v1/accounts`                          | `read`        | `none`           | `projected`           |
+| `createAccount`       | `POST /v1/accounts`                         | `write`       | `confirm`        | `secure_input_output` |
+| `getAccount`          | `GET /v1/accounts/{account_id}`             | `read`        | `none`           | `projected`           |
+| `updateAccount`       | `PATCH /v1/accounts/{account_id}`           | `write`       | `confirm`        | `secure_input_output` |
+| `deleteAccount`       | `DELETE /v1/accounts/{account_id}`          | `destructive` | `double_confirm` | `model_safe`          |
+| `getAccountOperation` | `GET /v1/account-operations/{operation_id}` | `read`        | `none`           | `projected`           |
 
 生成的命令和策略映射见[操作说明](references/operations.zh-CN.md)。

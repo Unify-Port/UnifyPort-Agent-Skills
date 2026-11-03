@@ -14,7 +14,7 @@ UnifyPort Agent Skills 将公开 SDK operation metadata 转换为面向 AI agent
 
 ## 当前状态
 
-当前 capability catalog 将公开 SDK 导出的 64 个 operations 全部唯一分配给 16 个任务型 Skills。仓库已实现 catalog validation、数据分类、确定性 Skill 与 policy 生成、共享 execution runtime、受控 CLI、stdio MCP、带 policy-gated OpenAPI facade 的鉴权 Streamable HTTP gateway、adapter source、双语文档检查、source/generated public scanning、npm tarball scanning 和完整 patch-history scanning。
+当前 capability catalog 将公开 SDK 导出的 78 个 operations 全部唯一分配给 18 个任务型 Skills。仓库已实现 catalog validation、数据分类、确定性 Skill 与 policy 生成、共享 execution runtime、受控 CLI、stdio MCP、带 policy-gated OpenAPI facade 的鉴权 Streamable HTTP gateway、adapter source、双语文档检查、source/generated public scanning、npm tarball scanning 和完整 patch-history scanning。
 
 这些组件已经在源码中实现并测试，但尚未发布到 npm。目录 adapter tests 属于本地 integration evidence，不能证明厂商托管环境端到端行为。TRAE、Dify 和 Coze 的交付边界也不同于原生目录 Skills。
 
@@ -32,7 +32,7 @@ UnifyPort Agent Skills 将公开 SDK operation metadata 转换为面向 AI agent
 ```mermaid
 flowchart LR
     A["公开 SDK operation metadata"] --> D["Capability validation"]
-    B["16-Skill capability catalog"] --> D
+    B["18-Skill capability catalog"] --> D
     C["数据分类策略"] --> D
     D --> E["确定性 generator"]
     E --> F["Capability manifest"]
@@ -57,7 +57,7 @@ Generator 只读取公开 SDK metadata 和仓库中经过评审的 policies。�
 以下情况会使 `pnpm capabilities:check` fail closed：
 
 - Catalog operation 不存在于公开 SDK，或 SDK operation 未分配。
-- Operation 重复分配，或者预期的 64-operation、16-Skill 数量发生漂移。
+- Operation 重复分配，或者预期的 78-operation、18-Skill 数量发生漂移。
 - Catalog access 弱化 SDK mutability classification。
 - Mutation 缺少所需 confirmation classification。
 - SDK secret flag 没有映射到安全通道和已分类 data pointer。
@@ -85,15 +85,15 @@ Generator 只读取公开 SDK metadata 和仓库中经过评审的 policies。�
 `pnpm capabilities:check` 将 catalog ownership 与公开 SDK operation inventory 比较。当前不变量为：
 
 ```text
-public operations = 64
-owned operations = 64
+public operations = 78
+owned operations = 78
 missing ownership = 0
 duplicate ownership = 0
 ```
 
 ## 任务型 Skill 层
 
-16 个 Skills 列在仓库 README 中。它们按用户意图组织 operations，而不是机械复制 API tags。一个 Skill 包含：
+18 个 Skills 列在仓库 README 中。它们按用户意图组织 operations，而不是机械复制 API tags。一个 Skill 包含：
 
 - 任务定义和经过评审的 workflow guidance。
 - 凭证与不可信数据边界。
@@ -159,15 +159,15 @@ Runtime 绝不接受由模型输出的任意 URL，并且只通过生成的公�
 
 受控 CLI 是安全交互操作的首选入口。它从 `UNIFYPORT_API_KEY` 读取 API Key，通过经过校验的环境引用接收额外 secrets，并且只把一次性 secret output 写入预留的 `0600` 文件。Secrets 不能通过普通命令参数传入，因为 process listing 和 shell history 可能暴露它们。
 
-CLI 表示全部 64 个 operations。写操作同时要求生成策略和 `UNIFYPORT_ALLOW_WRITES=true`；destructive 操作还要求 `UNIFYPORT_ALLOW_DESTRUCTIVE=true`。Confirmation 和 risk acceptance 与 secret handling 分别判断。
+CLI 表示全部 78 个 operations。写操作同时要求生成策略和 `UNIFYPORT_ALLOW_WRITES=true`；destructive 操作还要求 `UNIFYPORT_ALLOW_DESTRUCTIVE=true`。Confirmation 和 risk acceptance 与 secret handling 分别判断。
 
 ### MCP 与 OpenAPI facade
 
-MCP 是模型可见边界。已实现 server 只暴露 released SDK policy 和当前 permission switches 共同允许的 model-safe input 与脱敏 output。完整 64-operation ownership 不要求提供 64 个原始 MCP tools。
+MCP 是模型可见边界。已实现 server 只暴露 released SDK policy 和当前 permission switches 共同允许的 model-safe input 与脱敏 output。完整 78-operation ownership 不要求提供 78 个原始 MCP tools。
 
 stdio MCP 与 Streamable HTTP 默认只暴露 `getWorkspace`、`listApiKeys` 和 `listProviderRegions`。精确设置 `UNIFYPORT_ALLOW_WRITES=true` 后增加 `updateApiKeyStatus`；其余 60 个 operations 仍属于受控 CLI/Skill workflows。原始 secret 字段不得进入 MCP schemas、tool calls、tool results、traces 或模型上下文。
 
-HTTP gateway 还提供 `GET /openapi.json` 和 policy-gated `POST /tools/<tool-name>`。OpenAPI document 投影当前 MCP registry，因此保持同一组默认 3 个 tools、显式开启 writes 后 4 个 tools 的边界；它不是包含 64 个 operations 的原始 API。Tool execution 和 MCP requests 要求 Bearer Device API Key；schema 和 health endpoints 不执行 Device API operation。
+HTTP gateway 还提供 `GET /openapi.json` 和 policy-gated `POST /tools/<tool-name>`。OpenAPI document 投影当前 MCP registry，因此保持同一组默认 3 个 tools、显式开启 writes 后 4 个 tools 的边界；它不是包含 78 个 operations 的原始 API。Tool execution 和 MCP requests 要求 Bearer Device API Key；schema 和 health endpoints 不执行 Device API operation。
 
 Gateway 默认只绑定 loopback。绑定非 loopback 地址还要求显式 public flag、精确 host allowlist，以及直接配置的 TLS certificate/key 文件。可选 origin allowlist 会拒绝携带未批准 `Origin` header 的请求，但 gateway 不返回 CORS response headers，也不会启用 browser CORS。Request-size 与 header limits、timeouts 和并发上限进一步约束远程边界。
 

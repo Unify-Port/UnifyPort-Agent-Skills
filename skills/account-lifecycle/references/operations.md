@@ -20,7 +20,7 @@
 
 - MCP tool: not exposed by the released SDK policy
 - CLI: `unifyport-agent call createAccount --input-file <path>`
-- Policy: `write`, `confirm`, `secure_input`
+- Policy: `write`, `confirm`, `secure_input_output`
 - Retry: never retry automatically
 
 ## `getAccount`
@@ -34,7 +34,7 @@
 
 - MCP tool: not exposed by the released SDK policy
 - CLI: `unifyport-agent call updateAccount --input-file <path>`
-- Policy: `write`, `confirm`, `secure_input`
+- Policy: `write`, `confirm`, `secure_input_output`
 - Retry: never retry automatically
 
 ## `deleteAccount`
@@ -42,4 +42,11 @@
 - MCP tool: not exposed by the released SDK policy
 - CLI: `unifyport-agent call deleteAccount --input-file <path>`
 - Policy: `destructive`, `double_confirm`, `model_safe`
+- Retry: never retry automatically
+
+## `getAccountOperation`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call getAccountOperation --input-file <path>`
+- Policy: `read`, `none`, `projected`
 - Retry: never retry automatically

@@ -6,7 +6,7 @@ UnifyPort Agent Skills 是面向 AI agent 使用 UnifyPort Device API 的公开�
 
 ## 当前状态
 
-当前公开 SDK 导出 **64 个 operations**，capability catalog 将每个 operation 唯一归属到 **16 个任务型 Skills**。共享 runtime、受控 CLI、stdio MCP server、带鉴权的 Streamable HTTP gateway 和 adapter source 已在本仓库实现并测试。npm packages **尚未发布**；在官方宣布经过验证的 registry release 之前，请从源码构建和评估。
+当前公开 SDK 导出 **78 个 operations**，capability catalog 将每个 operation 唯一归属到 **18 个任务型 Skills**。共享 runtime、受控 CLI、stdio MCP server、带鉴权的 Streamable HTTP gateway 和 adapter source 已在本仓库实现并测试。npm packages **尚未发布**；在官方宣布经过验证的 registry release 之前，请从源码构建和评估。
 
 源码实现不等于厂商侧部署。目录 installers 和 OpenClaw staging metadata 只经过本地测试；TRAE 仍采用手工导入，Dify/Coze 使用平台 integration recipes。本仓库不声称任何 adapter 已在厂商托管环境完成端到端验证。
 
@@ -18,34 +18,36 @@ UnifyPort Agent Skills 是面向 AI agent 使用 UnifyPort Device API 的公开�
 - 默认采用最小权限、由调用方限制分页、日志脱敏，并对高影响操作要求明确确认。
 - 防止 secrets、私有基础设施细节和个人数据进入公开产物或模型可见通道。
 
-## 16 个任务型 Skills
+## 18 个任务型 Skills
 
-| Skill                    | 用途                                            | 默认暴露策略        |
-| ------------------------ | ----------------------------------------------- | ------------------- |
-| `workspace-overview`     | 验证访问并查看当前 workspace                    | 只读                |
-| `workspace-settings`     | 修改 workspace 设置                             | Admin，必须确认     |
-| `api-key-lifecycle`      | 列出、创建、启停和轮换 API Key                  | Admin，要求安全输出 |
-| `account-lifecycle`      | 发现可用区域并管理连接账号                      | 受保护              |
-| `account-authentication` | 完成二维码、验证码、密码或 session 授权流程     | 交互式安全通道      |
-| `account-runtime`        | 刷新、启动、停止或重连账号                      | 受保护              |
-| `conversation-explorer`  | 列出会话并查看详情或成员                        | 只读                |
-| `conversation-state`     | 修改已读、静音或置顶状态                        | 要求明确用户意图    |
-| `conversation-labels`    | 列出和管理会话标签                              | 受保护              |
-| `contact-directory`      | 搜索联系人并查看联系人状态                      | 只读，包含敏感数据  |
-| `contact-controls`       | 封锁、解封联系人或设置备注                      | 受保护              |
-| `group-explorer`         | 查看群组、入群申请和邀请信息                    | 只读，包含敏感数据  |
-| `group-administration`   | 创建或修改群组及成员关系                        | 高影响确认          |
-| `message-sender`         | 发送文本、媒体、文件、名片、回复或 mention 消息 | 外部副作用          |
-| `message-actions`        | 置顶、撤回、回应或编辑已有消息                  | 受保护              |
-| `webhook-endpoints`      | 管理事件投递 endpoint                           | Admin，要求安全输入 |
+| Skill                    | 用途                                            | 默认暴露策略         |
+| ------------------------ | ----------------------------------------------- | -------------------- |
+| `workspace-overview`     | 验证访问并查看当前 workspace                    | 只读                 |
+| `workspace-settings`     | 修改 workspace 设置                             | Admin，必须确认      |
+| `api-key-lifecycle`      | 列出、创建、启停和轮换 API Key                  | Admin，要求安全输出  |
+| `account-lifecycle`      | 发现可用区域并管理连接账号                      | 受保护               |
+| `account-authentication` | 完成二维码、验证码、密码或 session 授权流程     | 交互式安全通道       |
+| `account-runtime`        | 刷新、启动、停止或重连账号                      | 受保护               |
+| `conversation-explorer`  | 列出会话、查看成员并请求历史                    | 受控                 |
+| `conversation-state`     | 修改已读、静音或置顶状态                        | 要求明确用户意图     |
+| `conversation-labels`    | 列出和管理会话标签                              | 受保护               |
+| `contact-directory`      | 搜索、添加联系人并查看关系                      | 受控，包含敏感数据   |
+| `contact-controls`       | 封锁、解封联系人或设置备注                      | 受保护               |
+| `group-explorer`         | 查看群组、入群申请和邀请信息                    | 受控，包含敏感数据   |
+| `group-administration`   | 创建或修改群组及成员关系                        | 高影响确认           |
+| `message-sender`         | 发送文本、媒体、文件、名片、回复或 mention 消息 | 外部副作用           |
+| `message-actions`        | 置顶、撤回、回应或编辑已有消息                  | 受保护               |
+| `webhook-endpoints`      | 管理事件投递 endpoint                           | Admin，要求安全输入  |
+| `posts-comments`         | 读取帖子、评论与确认回复                        | 受控                 |
+| `calls`                  | 发起、查询与挂断 beta 通话                      | 安全输出与破坏性确认 |
 
-上述映射是覆盖不变量：64 个公开 `operationId` 必须全部出现且仅出现一次，不允许遗漏或重复归属。
+上述映射是覆盖不变量：78 个公开 `operationId` 必须全部出现且仅出现一次，不允许遗漏或重复归属。
 
 ## Runtime、CLI 与 MCP
 
 已实现的共享 runtime 统一负责鉴权、请求构造、响应 envelope、稳定错误码、request ID、timeout enforcement、脱敏和安全元数据。它始终向 SDK 传入 `retry: false`，也不会自动分页；retryability 和 pagination 只是 policy guidance，调用方必须显式且有界地处理。所有 adapters 都必须委托共享 runtime 执行 API，不能自行重新实现。
 
-- **受控 CLI：** 表示全部 64 个 operations；需要安全输入、一次性 secret 输出或确认的工作流必须使用此入口。写操作要求 `UNIFYPORT_ALLOW_WRITES=true`，destructive 操作还要求独立的 `UNIFYPORT_ALLOW_DESTRUCTIVE=true` 开关。
+- **受控 CLI：** 表示全部 78 个 operations；需要安全输入、一次性 secret 输出或确认的工作流必须使用此入口。写操作要求 `UNIFYPORT_ALLOW_WRITES=true`，destructive 操作还要求独立的 `UNIFYPORT_ALLOW_DESTRUCTIVE=true` 开关。
 - **stdio MCP：** 默认只暴露 `getWorkspace`、`listApiKeys` 和 `listProviderRegions`。设置 `UNIFYPORT_ALLOW_WRITES=true` 后增加 `updateApiKeyStatus`；其余 60 个 operations 仍通过 Skills 和受控 CLI 使用，不注册为原始模型工具。
 - **Streamable HTTP 与 OpenAPI facade：** `/mcp` 通过无状态 gateway 暴露 MCP allowlist。`GET /openapi.json` 投影同一组已注册 tools，`POST /tools/<tool-name>` 供 OpenAPI consumers 调用单个投影 tool。Tool execution 必须以 Bearer credential 携带 Device API Key；schema 和 health endpoints 不执行 Device API operation。
 - **Host/platform adapters：** 安装 canonical Skill assets 或提供明确的 integration recipe，不改变 runtime policy。
@@ -62,7 +64,7 @@ export UNIFYPORT_API_KEY='<your-api-key>'
 
 不要把 API Key 放入 prompt、命令参数、提交到 Git 的配置、MCP tool payload、测试 fixture 或日志。运行时负责把它映射为公开 API 鉴权 header，并从诊断信息中脱敏。
 
-部分工作流还需要额外受保护的数据，例如一次性验证码、密码、导入 session、webhook signing secret 或新签发的 API Key。这些操作仍属于 64-operation 覆盖范围，但必须通过 CLI 安全输入或 host 提供的安全通道执行，不能作为原始的模型可见 MCP tool 暴露。
+部分工作流还需要额外受保护的数据，例如一次性验证码、密码、导入 session、webhook signing secret 或新签发的 API Key。这些操作仍属于 78-operation 覆盖范围，但必须通过 CLI 安全输入或 host 提供的安全通道执行，不能作为原始的模型可见 MCP tool 暴露。
 
 ## 从源码构建
 
@@ -85,7 +87,7 @@ pnpm build
 - 直接加载的 TLS certificate 和 key 文件。
 - 可选的精确 origin allowlist，用于拒绝携带未批准 `Origin` header 的请求。
 
-Gateway 不返回 CORS response headers，因此 origin allowlist 不会启用浏览器 CORS。它对 body size、headers、request timeout、keep-alive 和并发执行限制，不会把 MCP session 当作鉴权，也不会记录 request headers 或 bodies。OpenAPI facade 只包含同一组默认 3 个 tools，显式开启 writes 后为 4 个；它不是包含 64 个 operations 的原始 API。配置见 [.env.example](.env.example)，后端接入见 [Go 与 Python 示例](examples/README.zh-CN.md)。
+Gateway 不返回 CORS response headers，因此 origin allowlist 不会启用浏览器 CORS。它对 body size、headers、request timeout、keep-alive 和并发执行限制，不会把 MCP session 当作鉴权，也不会记录 request headers 或 bodies。OpenAPI facade 只包含同一组默认 3 个 tools，显式开启 writes 后为 4 个；它不是包含 78 个 operations 的原始 API。配置见 [.env.example](.env.example)，后端接入见 [Go 与 Python 示例](examples/README.zh-CN.md)。
 
 ## 生成与验证
 

@@ -53,25 +53,20 @@ describe("configFromEnvironment", () => {
 });
 
 describe("AgentRuntime", () => {
-  it("keeps Facebook outside the released SDK provider schema", async () => {
-    // 源码候选渠道不能绕过已发布依赖的输入校验，即使操作本身只读。
+  it("accepts the released Facebook provider schema", async () => {
+    // 已发布依赖现已声明 FB，只读 region 查询仍须经过同一输入校验。
     const invoke = vi.fn(async () => ({ data: {}, status: 200 }));
-    const runtime = new AgentRuntime({
-      config: config({ enableWrites: true, enableDestructive: true }),
-      client: { listProviderRegions: invoke }
+    const runtime = new AgentRuntime({ config: config(), client: { listProviderRegions: invoke } });
+    await runtime.invoke("listProviderRegions", {
+      request: { params: { path: { provider: "facebook" } } }
     });
-    await expect(
-      runtime.invoke("listProviderRegions", {
-        request: { params: { path: { provider: "facebook" } } }
-      })
-    ).rejects.toMatchObject({ code: "INVALID_INPUT" });
-    expect(invoke).not.toHaveBeenCalled();
+    expect(invoke).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps the 64-operation public catalog complete", () => {
+  it("keeps all 78 operations owned across 18 workflows", () => {
     const runtime = new AgentRuntime({ config: config(), client: {} });
-    expect(runtime.listOperations()).toHaveLength(64);
-    expect(new Set(runtime.listOperations().map((entry) => entry.policy.workflowId)).size).toBe(16);
+    expect(runtime.listOperations()).toHaveLength(78);
+    expect(new Set(runtime.listOperations().map((entry) => entry.policy.workflowId)).size).toBe(18);
   });
 
   it("projects declared output and removes unknown or sensitive fields", async () => {
@@ -246,38 +241,4 @@ describe("AgentRuntime", () => {
     ).rejects.toMatchObject({ code: "WEBHOOK_TARGET_DENIED" });
     expect(createWebhookEndpoint).not.toHaveBeenCalled();
   });
-});
-
-describe("pending contract operations", () => {
-  it.each([
-    "createCall",
-    "getActiveCall",
-    "hangupCall",
-    "getAccountOperation",
-    "createAccountAuthSession",
-    "submitAccountPasskeyResponse",
-    "confirmAccountPasskey",
-    "listPosts",
-    "getPost",
-    "listPostComments",
-    "replyPostComment",
-    "requestConversationHistory",
-    "createContact",
-    "getContactMembership"
-  ])(
-    "keeps %s unavailable until its workflow and field policy are reviewed",
-    async (operationId) => {
-      // 依赖升级前只锁定拒绝边界，不把未审查的新接口暴露为模型工具。
-      const invoked = vi.fn(async () => ({ data: {}, status: 200 }));
-      const runtime = new AgentRuntime({
-        config: config({ enableWrites: true, enableDestructive: true }),
-        client: Object.fromEntries([[operationId, invoked]])
-      });
-      expect(runtime.isEnabled(operationId)).toBe(false);
-      await expect(runtime.invoke(operationId, { request: {} })).rejects.toMatchObject({
-        code: "UNKNOWN_OPERATION"
-      });
-      expect(invoked).not.toHaveBeenCalled();
-    }
-  );
 });

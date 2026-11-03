@@ -32,6 +32,7 @@ boundary; never construct an arbitrary HTTP method, path, header, or base URL.
    accepted response alone.
 
 - Report both operation acceptance and observed runtime state; HTTP success is not stability.
+- Facebook authorization is separate from runtime readiness. Bound refresh while starting; start/reconnect only with explicit intent. A runtime error does not itself revoke authorization.
 
 ## Operations
 

@@ -29,6 +29,7 @@ method、path、header 或 base URL。
 4. 仅报告安全投影后的结果与 request ID；异步操作只返回 accepted 时，不得声称任务已完成。
 
 - 同时报告操作受理结果与实际 runtime 状态；HTTP 成功不等于连接稳定。
+- Facebook 授权与 runtime readiness 分开判断。starting 时有界刷新；start/reconnect 必须有明确意图。runtime error 本身不等于撤销授权。
 
 ## Operations
 

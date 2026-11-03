@@ -35,10 +35,11 @@ boundary; never construct an arbitrary HTTP method, path, header, or base URL.
 
 ## Operations
 
-| operationId               | HTTP                                                  | Access | Confirmation | Channel     |
-| ------------------------- | ----------------------------------------------------- | ------ | ------------ | ----------- |
-| `listConversations`       | `GET /v1/accounts/{account_id}/conversations`         | `read` | `none`       | `projected` |
-| `getConversation`         | `GET /v1/accounts/{account_id}/conversations/info`    | `read` | `none`       | `projected` |
-| `listConversationMembers` | `GET /v1/accounts/{account_id}/conversations/members` | `read` | `none`       | `projected` |
+| operationId                  | HTTP                                                           | Access  | Confirmation | Channel     |
+| ---------------------------- | -------------------------------------------------------------- | ------- | ------------ | ----------- |
+| `listConversations`          | `GET /v1/accounts/{account_id}/conversations`                  | `read`  | `none`       | `projected` |
+| `getConversation`            | `GET /v1/accounts/{account_id}/conversations/info`             | `read`  | `none`       | `projected` |
+| `listConversationMembers`    | `GET /v1/accounts/{account_id}/conversations/members`          | `read`  | `none`       | `projected` |
+| `requestConversationHistory` | `POST /v1/accounts/{account_id}/conversations/history/request` | `write` | `confirm`    | `projected` |
 
 See [operation notes](references/operations.md) for the generated command and policy mapping.

@@ -15,7 +15,7 @@
 
 ## Source of truth
 
-- `capabilities/catalog.yaml` owns the 64-operation to 16-Skill mapping and operation risk policy.
+- `capabilities/catalog.yaml` owns the 78-operation to 18-Skill mapping and operation risk policy.
 - `policies/data-classification.yaml` owns field handling and secure-channel rules.
 - `skills/` is canonical. Host-specific adapters are generated; do not edit generated copies.
 - Generated files must be changed through their source and generator.

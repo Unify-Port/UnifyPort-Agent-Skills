@@ -11,7 +11,7 @@
 
 ## 真源
 
-- `capabilities/catalog.yaml` 负责 64 个 operation 到 16 个 Skill 的映射与操作风险策略。
+- `capabilities/catalog.yaml` 负责 78 个 operation 到 18 个 Skill 的映射与操作风险策略。
 - `policies/data-classification.yaml` 负责字段处理与安全通道规则。
 - `skills/` 是唯一 Skill 真源；各平台 adapter 由生成器产生，禁止手改生成副本。
 - 生成文件必须通过来源文件和生成器修改。

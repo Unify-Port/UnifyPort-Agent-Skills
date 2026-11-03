@@ -46,7 +46,7 @@ A public SDK dependency or capability-catalog change must preserve these invaria
 - Secret input and output declarations map to an approved secure channel and classified data pointers.
 - No local path, private host, implementation detail, credential, or personal data reaches the public artifact.
 
-The current inventory contains 64 operations. If the count changes, the pull request must explain the public API change, update the capability catalog and data policy, regenerate artifacts, and include an explicit compatibility review.
+The current inventory contains 78 operations. If the count changes, the pull request must explain the public API change, update the capability catalog and data policy, regenerate artifacts, and include an explicit compatibility review.
 
 ## Generated files
 
@@ -65,10 +65,10 @@ Run `pnpm check` for the complete configured validation chain. Only run commands
 
 ## Task-skill ownership
 
-All public operations must map to exactly one of the 16 task skills. When adding or moving an operation:
+All public operations must map to exactly one of the 18 task skills. When adding or moving an operation:
 
 - Update the machine-readable ownership manifest.
-- Preserve `64/64` coverage unless the public contract itself changed.
+- Preserve `78/78` coverage unless the public contract itself changed.
 - Reject missing and duplicate ownership.
 - Document cross-skill prerequisites rather than copying the same operation into multiple skills.
 - Keep secret-bearing operations in coverage even when they are CLI-only or require a host secure channel.

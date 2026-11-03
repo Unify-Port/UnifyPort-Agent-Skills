@@ -22,3 +22,10 @@
 - CLI: `unifyport-agent call listConversationMembers --input-file <path>`
 - Policy: `read`, `none`, `projected`
 - Retry: bounded retry permitted by the public SDK
+
+## `requestConversationHistory`
+
+- MCP tool: not exposed by the released SDK policy
+- CLI: `unifyport-agent call requestConversationHistory --input-file <path>`
+- Policy: `write`, `confirm`, `projected`
+- Retry: never retry automatically

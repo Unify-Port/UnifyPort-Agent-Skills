@@ -4,7 +4,7 @@
 
 ## 范围
 
-本文定义维护者如何同步公开契约、重新生成产物、保持 64-operation 与 16-Skill 覆盖、验证公开边界并发布 releases。
+本文定义维护者如何同步公开契约、重新生成产物、保持 78-operation 与 18-Skill 覆盖、验证公开边界并发布 releases。
 
 ## 当前状态
 
@@ -26,7 +26,7 @@ pnpm package:check
 | 产物                          | 权威范围                                                   | 可以手工修改吗？          |
 | ----------------------------- | ---------------------------------------------------------- | ------------------------- |
 | 固定版本的公开 SDK dependency | 公开 operation 和 wire metadata                            | 只能评审后修改版本        |
-| Capability catalog            | 16-Skill ownership、access、confirmation 和 channel policy | 可以，但需评审            |
+| Capability catalog            | 18-Skill ownership、access、confirmation 和 channel policy | 可以，但需评审            |
 | 数据分类策略                  | 受保护 input/output pointers 和 fail-closed 默认值         | 可以，但需安全评审        |
 | Host adapter inventory        | 经过评审的交付模式和目标 metadata                          | 可以；厂商 E2E 需单独验证 |
 | 生成 capability manifest      | 合并后的公开 operation 和 workflow metadata                | 不可以；由生成产生        |
@@ -60,9 +60,9 @@ Scanner 只是 guardrail，不负责决定内容是否可公开。Reviewers 仍�
 `pnpm capabilities:check` 将 catalog 与公开 SDK 导出的每个 operation 比较，并验证安全关系。当前 inventory 必须满足：
 
 ```text
-operation count = 64
-unique operationId count = 64
-workflow count = 16
+operation count = 78
+unique operationId count = 78
+workflow count = 18
 missing SDK assignments = 0
 duplicate catalog assignments = 0
 ```
@@ -75,7 +75,7 @@ Capability validation 通过后：
 
 1. 执行 `pnpm generate`。
 2. 评审生成 capability manifest 和 core policy catalog。
-3. 评审 16 个 workflows 各自生成的四份双语 Skill/reference 文件。
+3. 评审 18 个 workflows 各自生成的四份双语 Skill/reference 文件。
 4. 执行 `pnpm generate:check`，要求不存在缺失或过期输出。
 5. 执行 `pnpm docs:check` 和 `pnpm public:check`。
 
@@ -83,7 +83,7 @@ Capability validation 通过后：
 
 ## Skill 覆盖验证
 
-每个公开 operation 必须恰好有一个任务型 Skill owner。当前不变量是 16 个 Skills 覆盖 `64/64`。
+每个公开 operation 必须恰好有一个任务型 Skill owner。当前不变量是 18 个 Skills 覆盖 `78/78`。
 
 每个 operation 都必须包含 access、confirmation 和 channel catalog metadata。Validation 将这些信息与公开 SDK 的 method、path、mutability、retryability、secret-input 或 secret-output flags 结合；需要安全通道时还要包含 classified data pointers。
 
@@ -96,7 +96,7 @@ Release 至少必须验证：
 ### 当前 catalog 与 generator
 
 - Catalog 和 data-policy schema versions 受支持。
-- 64 个 SDK operations 在 16 个 workflows 中各有一个 owner。
+- 78 个 SDK operations 在 18 个 workflows 中各有一个 owner。
 - Mutability、confirmation、secret-channel 和 classified-pointer 关系通过。
 - 生成可复现，且每个预期生成文件都是最新版本。
 
