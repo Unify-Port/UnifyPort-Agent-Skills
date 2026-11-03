@@ -21,7 +21,7 @@
 
 审查余额字段及可选旧额度、建号幂等、删除 `202`/`204`、独立提交 `auth_mode` 切换、QR/Passkey 状态、渠道专用 session 导入及已读边界。可选数字错误码只属于过滤后的元数据，不得暴露上游 details。
 
-24 个事件名与 36 个专用 payload 声明分开审查。保留稀疏更新、显式 false/0/空值、投票撤回和乱序通话终态。新字段分类完成前默认拒绝；收到 Webhook 不证明消费方落库。
+24 个事件名与 40 个专用 payload 声明分开审查。保留稀疏更新、显式 false/0/空值、投票撤回和乱序通话终态。新字段分类完成前默认拒绝；收到 Webhook 不证明消费方落库。
 
 ## 开放门槛
 
@@ -29,3 +29,11 @@
 2. 更新 canonical capability 和 data-classification 文件，一起重新生成 Skills、策略、schema 和 host adapter。
 3. 验证 approval 绑定、write/destructive opt-in、secret reference、secure output reserve/commit/abort、脱敏、分页、幂等及禁止重试行为。
 4. 运行 `pnpm check` 和安装包验证；任何发布或外部写入前另行准备评审。
+
+## Facebook 候选支持
+
+Facebook 是现有操作的候选渠道，不是新工作流，也不是当前 runtime 已发布能力。安装的 SDK 保持 `0.1.3`；在已发布 SDK 和字段策略审查完成前，输入 schema 应继续拒绝 `provider=facebook`，只读工具也不例外。不得通过 raw request 绕过校验或启用仅源码存在的方法。
+
+启用前需审核 session 专属建号与导入、授权和运行就绪的区别、当前同步范围 E2EE 单聊、每次一条文本或媒体及渠道不支持的选项。会话 URL 和材料通过 secret reference 输入；公开资料、身份和媒体 URL 需审核输出投影和安全通道策略。未知写入结果不自动重试。
+
+四类标准回调单独审查：接收消息可以是 inbound 或 outbound；普通 runtime error 不撤销授权。保留字符串 ID、稀疏媒体、显式 false/零值和 UTC 精度，原生媒体 duration 不假定公共单位。增加 provider 枚举不授权群、联系人、帖子评论、通话、引用发送、caption 或 mentions。接收支持和真实账号投递分别验收。

@@ -53,6 +53,21 @@ describe("configFromEnvironment", () => {
 });
 
 describe("AgentRuntime", () => {
+  it("keeps Facebook outside the released SDK provider schema", async () => {
+    // 源码候选渠道不能绕过已发布依赖的输入校验，即使操作本身只读。
+    const invoke = vi.fn(async () => ({ data: {}, status: 200 }));
+    const runtime = new AgentRuntime({
+      config: config({ enableWrites: true, enableDestructive: true }),
+      client: { listProviderRegions: invoke }
+    });
+    await expect(
+      runtime.invoke("listProviderRegions", {
+        request: { params: { path: { provider: "facebook" } } }
+      })
+    ).rejects.toMatchObject({ code: "INVALID_INPUT" });
+    expect(invoke).not.toHaveBeenCalled();
+  });
+
   it("keeps the 64-operation public catalog complete", () => {
     const runtime = new AgentRuntime({ config: config(), client: {} });
     expect(runtime.listOperations()).toHaveLength(64);
